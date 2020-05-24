@@ -1,0 +1,13 @@
+asgiref==3.2.7
+beautifulsoup4==4.9.1
+Django==3.0.6
+django-bootstrap-datepicker-plus==3.0.5
+django-bootstrap4==1.1.1
+flake8==3.8.1
+mccabe==0.6.1
+psycopg2-binary==2.8.5
+pycodestyle==2.6.0
+pyflakes==2.2.0
+pytz==2020.1
+soupsieve==2.0.1
+sqlparse==0.3.1

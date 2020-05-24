@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ホーム
+{% endblock title %}
+
+{% block header %}
+Welcome to ようこそ PENGUIN
+{% endblock header %}
+
+{% block ac_home %}
+active
+{% endblock ac_home %}
+
+{% block contents %}
+<!--Home Menu for PC-->
+<div class="d-none d-xl-block">
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-arrow-left"></i>
+        左のメニューから項目を選択してください。
+    </div>
+</div>
+
+<!--notification-->
+<div class="card">
+    <div class="card-header">
+        お知らせ
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">統一テーマ投票が始まります</h4>
+        <p class="card-text">ほげほげふーばー</p>
+    </div>
+</div>
+
+<!--Home Menu for not PC-->
+<div class="d-xl-none mb-4">
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="fas fa-id-badge fa-3x"></i>
+                <hr>プロフィール</a>
+        </div>
+        <div class="col">
+            <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="far fa-envelope fa-3x"></i>
+                <hr>お問い合わせ</a>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-outline-success btn-block" href="admin" role="button"><i class="fas fa-database fa-3x"></i>
+                <hr>管理サイト</a>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<!--nfoffice twitter-->
+<a class="twitter-timeline" data-height="600" data-width="400"
+    href="https://twitter.com/nfoffice?ref_src=twsrc%5Etfw">Tweets by
+    nfoffice</a>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{% endblock contents %}
