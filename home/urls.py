@@ -20,4 +20,10 @@ urlpatterns = [
     path('login', views.LoginView.as_view(), name='login'),
     path('logout', views.LogoutView.as_view(), name='logout'),
     path('profile', views.ProfileView.as_view(), name='profile'),
+    path('notice', views.NoticeView.as_view(), name='notice'),
+    path('notice_delete/<pk>', views.notice_delete, name='notice_delete'),
+    path(
+        'notice_update/<pk>',
+        views.NoticeUpdateView.as_view(), name='notice_update'
+    ),
 ]

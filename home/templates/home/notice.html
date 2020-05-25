@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+お知らせ管理
+{% endblock title %}
+
+{% block header %}
+お知らせ管理
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">お知らせ管理</span>
+</nav>
+
+<!--create-->
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            お知らせ新規登録
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                お知らせを新規登録する場合はこのフォームに入力してください。
+                「OK」を押した瞬間、<b>ログインの有無に関わらず</b>すべてのユーザーにこの内容が表示されます。
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+
+<!--list-->
+<div class="card">
+    <div class="card-header">
+        お知らせ一覧
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>タイトル</th>
+                    <th>更新</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notice in notice_list %}
+                <tr>
+                    <td>{{ notice.title }}</td>
+                    <td>{{ notice.writer}}<br>{{ notice.update_datetime }}</td>
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'home:notice_update' notice.pk %}" role="button">編集</a>
+                        <button class="btn btn-danger" type="button" data-toggle="modal" data-target="#deleteModal-{{ notice.pk }}">削除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--delete modal-->
+{% for notice in notice_list %}
+<div class="modal fade" id="deleteModal-{{ notice.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle-{{ notice.pk }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+                <div class="modal-header">
+                        <h5 class="modal-title">本当に削除しますか？</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+            <div class="modal-body">
+                <p>下記内容のお知らせを削除します。よろしいですか？</p>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">タイトル</td>
+                            <td>{{ notice.title }}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">本文</td>
+                            <td>{{ notice.body|linebreaksbr }}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">最終更新</td>
+                            <td>{{ notice.update_datetime }}</td>
+                        </tr>
+                        <tr>
+                            <td scope="row">入力者</td>
+                            <td>{{ notice.writer }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">とじる</button>
+                <a href="{% url 'home:notice_delete' notice.pk %}" class="btn btn-danger">削除</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!--preview-->
+<div class="card">
+    <div class="card-header">
+        お知らせ（現在の表示）
+    </div>
+    <div class="card-body card-body-notice">
+        {% if notice_list %}
+        <div id="noticeCarouselControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for notice in notice_list %}
+                <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                    <h2>{{ notice.title }}</h2>
+                    <p>{{ notice.body|linebreaksbr }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <p>お知らせはありません</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock contents %}

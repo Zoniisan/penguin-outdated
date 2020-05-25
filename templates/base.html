@@ -146,7 +146,7 @@
                             {% if request.user.is_superuser %}
                             <span class="badge badge-danger">ADMIN</span>
                             {% elif request.user.is_staff %}
-                            <span class="badge badge-warning">STAFF</span>
+                            <span class="badge badge-success">STAFF</span>
                             {% else %}
                             <span class="badge badge-primary">NORMAL</span>
                             {% endif %}
@@ -162,7 +162,8 @@
                     <li class="{% block ac_home %}{% endblock ac_home %}"><a href="{% url 'home:index' %}"><i
                                 class="fas fa-home"></i>ホーム</a></li>
                     {% if request.user.is_authenticated %}
-                    <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i class="fas fa-id-badge"></i>プロフィール</a></li>
+                    <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i
+                                class="fas fa-id-badge"></i>プロフィール</a></li>
                     <li><a href="#"><i class="far fa-envelope"></i>お問い合わせ</a></li>
                     {% endif %}
                 </ul>
@@ -170,6 +171,12 @@
                 <span class="heading">Staff Only</span>
                 <ul class="list-unstyled">
                     <li> <a href="admin"> <i class="fas fa-database"></i>管理サイト</a></li>
+                </ul>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                <span class="heading">Admin Only</span>
+                <ul class="list-unstyled">
+                    <li> <a href="{% url 'home:notice' %}"> <i class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
                 </ul>
                 {% endif %}
             </nav>

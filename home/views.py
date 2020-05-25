@@ -4,9 +4,11 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -14,7 +16,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from home import forms
-from home.models import User, UserToken
+from home.models import Notice, User, UserToken
+from penguin import mixins
 
 
 class IndexView(generic.TemplateView):
@@ -22,6 +25,13 @@ class IndexView(generic.TemplateView):
     """
 
     template_name = 'home/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Notice（お知らせ）を表示
+        context['notice_list'] = Notice.objects.all()
+        return context
 
 
 class SignUpTokenView(generic.CreateView):
@@ -151,3 +161,71 @@ class ProfileView(LoginRequiredMixin, generic.TemplateView):
     """
 
     template_name = 'home/profile.html'
+
+
+class NoticeView(mixins.AdminOnlyMixin, generic.CreateView):
+    """お知らせ管理画面
+
+    システム管理者のみ利用可能
+    """
+
+    template_name = 'home/notice.html'
+    fields = ('title', 'body')
+    model = Notice
+    success_url = reverse_lazy('home:notice')
+
+    def form_valid(self, form):
+        # writer を登録
+        form.instance.writer = self.request.user
+
+        # message 発出
+        messages.success(
+            self.request, 'お知らせ「%s」を登録しました！' %
+            form.instance.title
+        )
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['notice_list'] = Notice.objects.all()
+        return context
+
+
+def notice_delete(self, pk):
+    """お知らせを削除
+
+    システム管理者のみ利用可能
+    """
+    # admin only
+    if not self.user.is_superuser:
+        raise PermissionDenied
+
+    notice = Notice.objects.get(pk=pk)
+    notice.delete()
+    messages.error(self, 'お知らせ「%s」を削除しました！' % notice.title)
+    return redirect('home:notice')
+
+
+class NoticeUpdateView(mixins.AdminOnlyMixin, generic.UpdateView):
+    """お知らせ更新画面
+
+    システム管理者のみ利用可能
+    """
+
+    template_name = 'home/notice_update.html'
+    fields = ('title', 'body')
+    model = Notice
+    success_url = reverse_lazy('home:notice')
+
+    def form_valid(self, form):
+        # writer を登録
+        form.instance.writer = self.request.user
+
+        # message 発出
+        messages.success(
+            self.request, 'お知らせ「%s」を更新しました！' %
+            form.instance.title
+        )
+
+        return super().form_valid(form)

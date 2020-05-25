@@ -1,1 +1,4 @@
-/* your styles go here */
+/* ホーム画面のお知らせ表示領域の高さを固定 */
+.card-body-notice {
+    height: 13em;
+}

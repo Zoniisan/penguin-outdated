@@ -100,7 +100,7 @@ active
                         {% if request.user.is_superuser %}
                         <span class="badge badge-danger">ADMIN</span>&nbsp;システム管理者
                         {% elif request.user.is_staff %}
-                        <span class="badge badge-warning">STAFF</span>&nbsp;事務局員
+                        <span class="badge badge-success">STAFF</span>&nbsp;事務局員
                         {% else %}
                         <span class="badge badge-primary">NORMAL</span>&nbsp;一般京大生
                         {% endif %}

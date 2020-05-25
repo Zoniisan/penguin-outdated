@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+お知らせ更新
+{% endblock title %}
+
+{% block header %}
+お知らせ更新
+<br>{{ object.title }}
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:notice' %}">お知らせ管理</a>
+    <span class="breadcrumb-item active">お知らせ更新</span>
+</nav>
+
+<!--create-->
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            お知らせ更新
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                お知らせを新規登録する場合はこのフォームに入力してください。
+                「OK」を押した瞬間、<b>ログインの有無に関わらず</b>すべてのユーザーにこの内容が表示されます。
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}

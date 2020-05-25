@@ -59,3 +59,29 @@ class UserTokenAdmin(admin.ModelAdmin):
     readonly_fields = (
         'create_datetime',
     )
+
+
+@admin.register(models.Notice)
+class NoticeAdmin(admin.ModelAdmin):
+    """ [Admin] PENGUIN アカウント
+    """
+    fieldsets = (
+        ('入力情報', {'fields': ('title', 'body')}),
+        ('その他', {'fields': ('writer', 'update_datetime')}),
+    )
+
+    list_display = (
+        'title', 'writer', 'update_datetime'
+    )
+
+    search_fields = (
+        'title',
+    )
+
+    readonly_fields = (
+        'update_datetime',
+    )
+
+    autocomplete_fields = (
+        'writer',
+    )
