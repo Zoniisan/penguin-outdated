@@ -176,7 +176,7 @@
                 {% if request.user.is_superuser %}
                 <span class="heading">Admin Only</span>
                 <ul class="list-unstyled">
-                    <li> <a href="{% url 'home:notice' %}"> <i class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
+                    <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
                 </ul>
                 {% endif %}
             </nav>
