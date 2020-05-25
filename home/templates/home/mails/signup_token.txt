@@ -1,0 +1,12 @@
+{% extends 'mails/base.txt' %}
+
+{% block contents %}
+PENGUIN アカウント仮登録者様
+
+まだ PENGUIN アカウントは作成していません。
+
+PENGUIN のアカウントを本登録する場合は、下記リンクに
+1 時間以内にアクセスしてください。
+
+{{ base_url }}{{ signup_url }}
+{% endblock contents %}

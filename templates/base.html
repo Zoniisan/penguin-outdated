@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap4 %}
 
 <!DOCTYPE html>
 <html>
@@ -18,7 +19,8 @@
     <link rel="stylesheet" href="{% static 'css/fontastic.css' %}">
     <!-- Google fonts - Poppins -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-    <!-- theme stylesheet--><!--テーマカラーはここで変更！-->
+    <!-- theme stylesheet-->
+    <!--テーマカラーはここで変更！-->
     <link rel="stylesheet" href="{% static 'css/style.blue.css' %}" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
@@ -39,7 +41,8 @@
                     <div class="navbar-holder d-flex align-items-center justify-content-between">
                         <!-- Navbar Header-->
                         <div class="navbar-header">
-                            <!-- Navbar Brand --><a href="index.html" class="navbar-brand d-none d-sm-inline-block">
+                            <!-- Navbar Brand --><a href="{% url 'home:index' %}"
+                                class="navbar-brand d-none d-sm-inline-block">
                                 <div class="brand-text d-none d-lg-inline-block">PENGUIN</div>
                                 <div class="brand-text d-none d-sm-inline-block d-lg-none"><strong>PG</strong></div>
                             </a>
@@ -48,6 +51,7 @@
                         </div>
                         <!-- Navbar Menu -->
                         <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                            {% if request.user.is_authenticated %}
                             <!-- Notifications-->
                             <li class="nav-item dropdown"> <a id="notifications" rel="nofollow" data-target="#" href="#"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
@@ -88,29 +92,35 @@
                                 </ul>
                             </li>
                             <!-- Logout    -->
-                            <li class="nav-item"><a href="#" class="nav-link logout"  data-toggle="modal" data-target="#logoutModal"> <span
-                                        class="d-none d-sm-inline">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                            <li class="nav-item"><a href="#" class="nav-link logout" data-toggle="modal"
+                                    data-target="#logoutModal"> <span class="d-none d-sm-inline">Logout</span><i
+                                        class="fa fa-sign-out"></i></a></li>
+                            {% else %}
+                            <li class="nav-item"><a href="{% url 'home:login' %}" class="nav-link logout"> <span
+                                        class="d-none d-sm-inline">Login</span><i class="fa fa-sign-in"></i></a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
             </nav>
 
             <!-- Logout Modal -->
-            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">ログアウトしますか？</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
                         <div class="modal-body">
                             ログアウトする場合は、「ログアウト」を押してください。
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">とじる</button>
-                            <button type="button" class="btn btn-primary">ログアウト</button>
+                            <a href="{% url 'home:logout' %}" class="btn btn-primary">ログアウト</a>
                         </div>
                     </div>
                 </div>
@@ -124,19 +134,44 @@
                     <div class="avatar"><img src="{% static 'img/penguin_logo.png' %}" alt="..."
                             class="img-fluid rounded-circle"></div>
                     <div class="title">
-                        <h1 class="h4">若林勇弥</h1>
-                        <p><span class="badge badge-danger">ADMIN</span>&nbsp;1029297270</p>
+                        <h1 class="h4">
+                            {% if request.user.is_authenticated %}
+                            {{ request.user.get_full_name }}
+                            {% else %}
+                            ゲスト
+                            {% endif %}
+                        </h1>
+                        <p>
+                            {% if request.user.is_authenticated %}
+                            {% if request.user.is_superuser %}
+                            <span class="badge badge-danger">ADMIN</span>
+                            {% elif request.user.is_staff %}
+                            <span class="badge badge-warning">STAFF</span>
+                            {% else %}
+                            <span class="badge badge-primary">NORMAL</span>
+                            {% endif %}
+                            &nbsp;{{ request.user.username }}
+                            {% else %}
+                            <a href="{% url 'home:login' %}">ログイン</a>してください
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
                 <!-- Sidebar Navidation Menus--><span class="heading">Menu</span>
                 <ul class="list-unstyled">
-                    <li class="{% block ac_home %}{% endblock ac_home %}"><a href="index.html"><i class="fas fa-home"></i>ホーム </a></li>
+                    <li class="{% block ac_home %}{% endblock ac_home %}"><a href="{% url 'home:index' %}"><i
+                                class="fas fa-home"></i>ホーム </a></li>
+                    {% if request.user.is_authenticated %}
                     <li><a href="#"><i class="fas fa-id-badge"></i>プロフィール </a></li>
                     <li><a href="#"><i class="far fa-envelope"></i>お問い合わせ </a></li>
-                </ul><span class="heading">Staff Only</span>
+                    {% endif %}
+                </ul>
+                {% if request.user.is_staff %}
+                <span class="heading">Staff Only</span>
                 <ul class="list-unstyled">
                     <li> <a href="admin"> <i class="fas fa-database"></i>管理サイト </a></li>
                 </ul>
+                {% endif %}
             </nav>
             <div class="content-inner">
                 <!-- Page Header-->
@@ -147,6 +182,14 @@
                 </header>
                 <section class="page-contents pt-4">
                     <div class="container-fluid">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="{{ message|bootstrap_message_classes }} alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
                         {% block contents %}
                         {% endblock contents %}
                     </div>

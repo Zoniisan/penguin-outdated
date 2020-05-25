@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+本登録完了
+{% endblock title %}
+
+{% block header %}
+本登録完了
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item invalid">アカウント本登録</span>
+    <span class="breadcrumb-item active">完了</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        本登録完了
+    </div>
+    <div class="card-body">
+        <p class="card-text">アカウントの登録が終了しました。</p>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary btn-block" href="{% url 'home:index' %}" role="button">ログイン</a>
+    </div>
+</div>
+
+{% endblock contents %}

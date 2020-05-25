@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+アカウント本登録
+{% endblock title %}
+
+{% block header %}
+アカウント本登録
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">アカウント本登録</span>
+</nav>
+
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            アカウント本登録
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                メールアドレス: <b>{{ email }}</b> のアカウントの本登録を行います。
+            </div>
+            {% csrf_token %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.username %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.last_name %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.first_name %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.last_name_kana %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.first_name_kana %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.faculty %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.grade %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.tel %}
+            <hr>
+            <div class="alert alert-warning" role="alert">
+                以下は Shibboleth 認証導入までの暫定的措置
+            </div>
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.password1 %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.password2 %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}

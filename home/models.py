@@ -144,3 +144,41 @@ class User(AbstractUser):
         verbose_name='affiliation',
         max_length=10
     )
+
+
+class UserToken(models.Model):
+    """ PENGUIN アカウント仮登録トークン
+
+    トークンは 1 時間有効
+    """
+
+    # settings
+
+    class Meta:
+        verbose_name = '仮登録トークン'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.email
+
+    # fields
+
+    email = models.EmailField(
+        verbose_name='メールアドレス',
+        max_length=400
+    )
+
+    token = models.CharField(
+        verbose_name='トークン',
+        max_length=100
+    )
+
+    create_datetime = models.DateTimeField(
+        verbose_name='仮登録日時',
+        auto_now_add=True
+    )
+
+    used = models.BooleanField(
+        verbose_name='使用済',
+        default=False
+    )

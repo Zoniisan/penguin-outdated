@@ -156,6 +156,28 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'general_static'),
 )
 
+
 # Datetime format
-DATETIME_FORMAT = 'y/m/d H:i:s'
-DATE_FORMAT = 'y/m/d'
+DATETIME_FORMAT = 'Y/m/d H:i:s'
+DATE_FORMAT = 'Y/m/d'
+
+# Email settings
+if senv.EMAIL_CONSOLE:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = senv.EMAIL_HOST
+EMAIL_PORT = senv.EMAIL_PORT
+EMAIL_HOST_USER = senv.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = senv.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = senv.EMAIL_USE_TLS
+
+# Url settings
+BASE_URL = senv.BASE_URL
+
+
+# login/out settings
+LOGIN_URL = 'home:login'
+LOGIN_REDIRECT_URL = 'home:index'
+# LOGOUT_REDIRECT_URL = 'home:login'

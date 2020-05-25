@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 
-from home.models import User
+from home import models
 
 
-@admin.register(User)
+@admin.register(models.User)
 class UserAdmin(AuthUserAdmin):
     """ [Admin] PENGUIN アカウント
     """
@@ -30,11 +30,32 @@ class UserAdmin(AuthUserAdmin):
     )
 
     list_display = (
-        'username', 'last_name', 'first_name', 'last_name_kana',
-        'first_name_kana', 'is_staff'
+        'username', 'last_name', 'first_name', 'is_staff',
+        'last_login', 'date_joined'
     )
 
     search_fields = (
         'username', 'first_name', 'last_name',
         'last_name_kana', 'first_name_kana'
+    )
+
+
+@admin.register(models.UserToken)
+class UserTokenAdmin(admin.ModelAdmin):
+    """ [Admin] PENGUIN アカウント
+    """
+    fieldsets = (
+        (None, {'fields': ('email', 'token', 'create_datetime', 'used')}),
+    )
+
+    list_display = (
+        'email', 'create_datetime', 'used'
+    )
+
+    search_fields = (
+        'email',
+    )
+
+    readonly_fields = (
+        'create_datetime',
     )

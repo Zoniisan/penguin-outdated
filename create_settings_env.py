@@ -24,6 +24,13 @@ data = [
     "DB_NAME = (Your Database Name)",
     "DB_USER = (Your Database Username)",
     "DB_PASSWORD = (Your Database Password)",
+    "EMAIL_CONSOLE = False"
+    "EMAIL_HOST = (Your Email Host Ex: 'smtp.gmail.com')",
+    "EMAIL_PORT = (Your Email Port Ex: '587')",
+    "EMAIL_HOST_USER = (Your Email Host User Ex: 'hoge@gmail.com')",
+    "EMAIL_HOST_PASSWORD = 'Your Email Host Password (App Password)",
+    "EMAIL_USE_TLS = (True / False)",
+    "BASE_URL = (Your Base Url Ex: https://penguin.nf.la)"
     ""
 ]
 

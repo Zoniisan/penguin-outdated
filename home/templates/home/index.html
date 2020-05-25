@@ -32,23 +32,47 @@ active
     </div>
 </div>
 
+{% if not request.user.is_authenticated %}
+<!--signin / signup-->
+<div class="card">
+    <div class="card-header">
+        ログインしてください
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl mb-2 mb-xl-0"><a class="btn btn-primary btn-block" href="{% url 'home:login' %}"
+                    role="button">ログイン</a></div>
+            <div class="col-xl"><a class="btn btn-info btn-block" href="{% url 'home:signup_token' %}"
+                    role="button">アカウント作成</a></div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!--Home Menu for not PC-->
 <div class="d-xl-none mb-4">
     <div class="row mb-4">
+        {% if request.user.is_authenticated %}
         <div class="col">
             <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="fas fa-id-badge fa-3x"></i>
                 <hr>プロフィール</a>
         </div>
+        {% endif %}
+        {% if request.user.is_authenticated %}
         <div class="col">
             <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="far fa-envelope fa-3x"></i>
                 <hr>お問い合わせ</a>
         </div>
+        {% endif %}
     </div>
     <div class="row mb-4">
+        {% if request.user.is_staff %}
         <div class="col">
-            <a class="btn btn-outline-success btn-block" href="admin" role="button"><i class="fas fa-database fa-3x"></i>
+            <a class="btn btn-outline-success btn-block" href="admin" role="button"><i
+                    class="fas fa-database fa-3x"></i>
                 <hr>管理サイト</a>
         </div>
+        {% endif %}
         <div class="col">
         </div>
     </div>

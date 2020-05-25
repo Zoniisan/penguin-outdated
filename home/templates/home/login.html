@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+ログイン
+{% endblock title %}
+
+{% block header %}
+ログイン
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">ログイン</span>
+</nav>
+
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            ログイン
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning" role="alert">
+                Shibboleth 対応までの暫定的措置
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+仮登録完了
+{% endblock title %}
+
+{% block header %}
+仮登録完了
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:signup_token' %}">アカウント仮登録</a>
+    <span class="breadcrumb-item active">完了</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        仮登録完了
+    </div>
+    <div class="card-body">
+        <p class="card-text">入力されたメールアドレスにメールを送信しました。</p>
+        <p class="card-text">メールに記載されたリンクにアクセスし、アカウントを作成してください。</p>
+        <p class="card-text">リンクの有効期間は 1 時間です。</p>
+    </div>
+</div>
+
+{% endblock contents %}

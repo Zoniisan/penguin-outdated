@@ -9,8 +9,8 @@
     * `psql (PostgreSQL) 12.2 (Ubuntu 12.2-4)` で動作確認しています
 
 ## How to install and run
-1. `git clone git@github.com:Zoniisan/nf-penguin.git` 
-1. `pip install requirements.txt` (仮想環境を作ったほうがいいと思います)
+1. `git clone git@github.com:Zoniisan/nf-penguin.git`
+1. `pip install -r requirements.txt` (仮想環境を作ったほうがいいと思います)
 1. postgresql のデータベースを作る
     * https://qiita.com/shigechioyo/items/9b5a03ceead6e5ec87ec
     * 「はじめに」〜「パスワード認証へ変更する」まで行えば OK
