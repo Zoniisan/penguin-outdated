@@ -74,7 +74,7 @@ class Command(BaseCommand):
                 faculty='総',
                 grade='B1',
                 shib_eptid='ept_officer_%s' % zfilled_i,
-                shib_affiliation="students",
+                shib_affiliation="student",
                 is_staff=True
             )
             u.set_password('hogehoge')

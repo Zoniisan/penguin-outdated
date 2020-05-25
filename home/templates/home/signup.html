@@ -49,6 +49,11 @@
             {% bootstrap_field form.password1 %}
             <span class="badge badge-danger">必須</span>
             {% bootstrap_field form.password2 %}
+            <hr>
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">「OK」ボタンを押すと原則情報は変更できません</h4>
+                <p class="mb-0">もう一度入力した情報を確認してください。</p>
+            </div>
         </div>
         <div class="card-footer">
             {% buttons %}

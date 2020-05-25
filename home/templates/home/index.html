@@ -54,7 +54,7 @@ active
     <div class="row mb-4">
         {% if request.user.is_authenticated %}
         <div class="col">
-            <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="fas fa-id-badge fa-3x"></i>
+            <a class="btn btn-outline-primary btn-block" href="{% url 'home:profile' %}" role="button"><i class="fas fa-id-badge fa-3x"></i>
                 <hr>プロフィール</a>
         </div>
         {% endif %}

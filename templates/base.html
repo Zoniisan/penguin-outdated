@@ -160,16 +160,16 @@
                 <!-- Sidebar Navidation Menus--><span class="heading">Menu</span>
                 <ul class="list-unstyled">
                     <li class="{% block ac_home %}{% endblock ac_home %}"><a href="{% url 'home:index' %}"><i
-                                class="fas fa-home"></i>ホーム </a></li>
+                                class="fas fa-home"></i>ホーム</a></li>
                     {% if request.user.is_authenticated %}
-                    <li><a href="#"><i class="fas fa-id-badge"></i>プロフィール </a></li>
-                    <li><a href="#"><i class="far fa-envelope"></i>お問い合わせ </a></li>
+                    <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i class="fas fa-id-badge"></i>プロフィール</a></li>
+                    <li><a href="#"><i class="far fa-envelope"></i>お問い合わせ</a></li>
                     {% endif %}
                 </ul>
                 {% if request.user.is_staff %}
                 <span class="heading">Staff Only</span>
                 <ul class="list-unstyled">
-                    <li> <a href="admin"> <i class="fas fa-database"></i>管理サイト </a></li>
+                    <li> <a href="admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}
             </nav>

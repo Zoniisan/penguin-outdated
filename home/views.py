@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core.mail import send_mail
@@ -143,3 +144,10 @@ class LogoutView(AuthLogoutView):
     """
 
     template_name = 'home/logout.html'
+
+
+class ProfileView(LoginRequiredMixin, generic.TemplateView):
+    """プロフィール画面
+    """
+
+    template_name = 'home/profile.html'
