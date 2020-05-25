@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+403
+{% endblock title %}
+
+{% block header %}
+<span class="text-danger">403 Forbidden</span>
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">403 Forbidden</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        権限がありません
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            あなたはこのページを閲覧する権限がありません。
+        </p>
+    </div>
+    <div class="card-footer">
+        <p class="card-text">システム担当へのお問い合わせはこちら。</p>
+    </div>
+</div>
+
+{% endblock contents %}

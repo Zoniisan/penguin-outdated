@@ -9,7 +9,7 @@ from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import generic
@@ -200,7 +200,7 @@ def notice_delete(self, pk):
     if not self.user.is_superuser:
         raise PermissionDenied
 
-    notice = Notice.objects.get(pk=pk)
+    notice = get_object_or_404(Notice, pk=pk)
     notice.delete()
     messages.error(self, 'お知らせ「%s」を削除しました！' % notice.title)
     return redirect('home:notice')
