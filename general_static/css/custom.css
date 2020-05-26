@@ -2,3 +2,8 @@
 .card-body-notice {
     height: 13em;
 }
+
+/* table-clickable の Cursor を手の形にする */
+table.table-clickable tr[data-href] {
+    cursor: pointer;
+}

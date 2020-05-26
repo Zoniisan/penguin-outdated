@@ -1,0 +1,21 @@
+{% extends 'mails/base.txt' %}
+
+{% block contents %}
+{{ contact.writer }} 様
+
+下記の通りお問い合わせを受理しました。
+返信を行う場合は、このメールアドレス宛にお送りします。
+
+送信者
+{{ contact.writer }}
+
+お問い合わせ種別
+{{ contact.kind }}
+
+表題
+{{ contact.title }}
+
+本文
+{{ contact.body }}
+
+{% endblock contents %}

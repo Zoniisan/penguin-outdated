@@ -25,7 +25,7 @@ active
     <div class="card-body">
         <div class="alert alert-info" role="alert">
             プロフィールの変更は原則できません。ただし、結婚による改姓や情報誤入力など、
-            やむを得ない事情がある場合はこちらから 11 月祭事務局にお問い合わせください。
+            やむを得ない事情がある場合は<a href="{% url 'home:contact' %}">こちら</a>から 11 月祭事務局にお問い合わせください。
         </div>
         <p>あなたが参加する企画の他の参加者には <b>{{ request.user.get_display_name }}</b> と表示されます。</p>
 
@@ -106,6 +106,17 @@ active
                         {% endif %}
                     </td>
                 </tr>
+                {% if request.user.is_staff %}
+                <th>部局</th>
+                <td>
+                    {% for group in request.user.groups.all %}
+                    {{ group }}
+                    {% if not forloop.last %}
+                    <br>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                {% endif %}
             </tbody>
         </table>
 

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}
+お問い合わせ種別一覧
+{% endblock title %}
+
+{% block header %}
+お問い合わせ種別一覧
+{% endblock header %}
+
+{% block ac_contact_admin %}
+active
+{% endblock ac_contact_admin %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">お問い合わせ種別</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        お問い合わせ種別一覧
+    </div>
+    <div class="card-body">
+        <p>
+            お問い合わせの種別と管轄は次のとおりです。
+            あなたが管轄するお問い合わせのみ閲覧することができます。
+        </p>
+        <table class="table table-hover table-clickable">
+            <thead>
+                <tr>
+                    <th>種別</th>
+                    <th>管轄</th>
+                    <th>slack ch.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact_kind in contact_kind_list %}
+                {% if contact_kind.pk in contact_kind_accesible_pk_list %}
+                <tr data-href="{% url 'home:contact_list' contact_kind.pk %}">
+                    {% else %}
+                <tr class="table-secondary">
+                    {% endif %}
+                    <td>{{ contact_kind.name }}</td>
+                    <td>
+                        {% for office_group in contact_kind.office_groups.all %}
+                        {{ office_group.name }}
+                        {% if not forloop.last %}
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for office_group in contact_kind.office_groups.all %}
+                        #{{ office_group.slack_ch }}
+                        {% if not forloop.last %}
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock contents %}

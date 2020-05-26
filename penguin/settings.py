@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 INSTALLED_APPS += [
     'bootstrap4',
     'bootstrap_datepicker_plus',
+    'django_slack'
 ]
 
 # penguin
@@ -181,3 +182,35 @@ BASE_URL = senv.BASE_URL
 LOGIN_URL = 'home:login'
 LOGIN_REDIRECT_URL = 'home:index'
 # LOGOUT_REDIRECT_URL = 'home:login'
+
+
+# slack settings
+SLACK_TOKEN = senv.SLACK_TOKEN
+SLACK_CHANNEL = '#penguin-errors'
+SLACK_USERNAME = 'penguin-bot'
+SLACK_AS_USER = True
+SLACK_FAIL_SILENTLY = False
+if DEBUG:
+    SLACK_BACKEND = 'django_slack.backends.UrllibBackend'
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django_slack.log.SlackExceptionHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'ERROR',
+            'handlers': ['slack_admins'],
+        },
+    },
+}

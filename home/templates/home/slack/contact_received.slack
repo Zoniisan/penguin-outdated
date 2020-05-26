@@ -1,0 +1,11 @@
+{% extends django_slack %}
+{% load django_slack %}
+
+{% block channel %}
+#{{ office_group.slack_ch }}
+{% endblock channel %}
+
+{% block text %}
+お問い合わせを受理しました。
+必要に応じて対応してください。
+{% endblock text %}

@@ -16,8 +16,12 @@ active
 <!--Home Menu for PC-->
 <div class="d-none d-xl-block">
     <div class="alert alert-info" role="alert">
+        {% if request.user.is_authenticated %}
         <i class="fas fa-arrow-left"></i>
         左のメニューから項目を選択してください。
+        {% else %}
+        <a href="{% url 'home:login' %}">ログイン</a>してください。
+        {% endif %}
     </div>
 </div>
 
@@ -73,7 +77,8 @@ active
         </div>
         <div class="col">
             {% if request.user.is_authenticated %}
-            <a class="btn btn-outline-primary btn-block" href="#" role="button"><i class="far fa-envelope fa-3x"></i>
+            <a class="btn btn-outline-primary btn-block" href="{% url 'home:contact' %}" role="button"><i
+                    class="far fa-envelope fa-3x"></i>
                 <hr>お問い合わせ</a>
             {% endif %}
         </div>
@@ -81,11 +86,20 @@ active
     <div class="row mb-4">
         <div class="col">
             {% if request.user.is_staff %}
-            <a class="btn btn-outline-success btn-block" href="admin" role="button"><i
+            <a class="btn btn-outline-success btn-block" href="/admin" role="button"><i
                     class="fas fa-database fa-3x"></i>
                 <hr>管理サイト</a>
             {% endif %}
         </div>
+        <div class="col">
+            {% if request.user.is_superuser %}
+            <a class="btn btn-outline-success btn-block" href="{% url 'home:contact_kind' %}" role="button"><i
+                    class="fas fa-envelope fa-3x"></i>
+                <hr>お問い合わせ管理</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mb-4">
         <div class="col">
             {% if request.user.is_superuser %}
             <a class="btn btn-outline-danger btn-block" href="{% url 'home:notice' %}" role="button"><i
@@ -93,6 +107,7 @@ active
                 <hr>お知らせ管理</a>
             {% endif %}
         </div>
+        <div class="col"></div>
     </div>
 </div>
 

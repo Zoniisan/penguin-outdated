@@ -30,7 +30,8 @@ data = [
     "EMAIL_HOST_USER = (Your Email Host User Ex: 'hoge@gmail.com')",
     "EMAIL_HOST_PASSWORD = 'Your Email Host Password (App Password)",
     "EMAIL_USE_TLS = (True / False)",
-    "BASE_URL = (Your Base Url Ex: https://penguin.nf.la)"
+    "BASE_URL = (Your Base Url Ex: https://penguin.nf.la)",
+    "SLACK_TOKEN = (Your Slack Token)"
     ""
 ]
 

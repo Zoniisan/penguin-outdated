@@ -26,4 +26,14 @@ urlpatterns = [
         'notice_update/<pk>',
         views.NoticeUpdateView.as_view(), name='notice_update'
     ),
+    path('contact', views.ContactView.as_view(), name='contact'),
+    path('contact_kind', views.ContactKindView.as_view(), name='contact_kind'),
+    path(
+        'contact_list/<pk>', views.ContactListView.as_view(),
+        name='contact_list'
+    ),
+    path(
+        'contact_detail/<pk>', views.ContactDetailView.as_view(),
+        name='contact_detail'
+    ),
 ]

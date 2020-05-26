@@ -131,7 +131,7 @@
             <nav class="side-navbar">
                 <!-- Sidebar Header-->
                 <div class="sidebar-header d-flex align-items-center">
-                    <div class="avatar"><img src="{% static 'img/penguin_logo.png' %}" alt="..."
+                    <div class="avatar"><img src="{% static 'img/penguin_logo.png' %}" alt="PENGUIN Logo"
                             class="img-fluid rounded-circle"></div>
                     <div class="title">
                         <h1 class="h4">
@@ -155,6 +155,14 @@
                             <a href="{% url 'home:login' %}">ログイン</a>してください
                             {% endif %}
                         </p>
+                        {% if request.user.is_staff %}
+                        <hr>
+                        {% for group in request.user.groups.all %}
+                        <p>{{ group }}</p>
+                        {% if not forloop.last %}
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
                 <!-- Sidebar Navidation Menus--><span class="heading">Menu</span>
@@ -164,19 +172,23 @@
                     {% if request.user.is_authenticated %}
                     <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i
                                 class="fas fa-id-badge"></i>プロフィール</a></li>
-                    <li><a href="#"><i class="far fa-envelope"></i>お問い合わせ</a></li>
+                    <li class="{% block ac_contact %}{% endblock ac_contact %}"><a href="{% url 'home:contact' %}"><i
+                                class="far fa-envelope"></i>お問い合わせ</a></li>
                     {% endif %}
                 </ul>
                 {% if request.user.is_staff %}
                 <span class="heading">Staff Only</span>
                 <ul class="list-unstyled">
-                    <li> <a href="admin"> <i class="fas fa-database"></i>管理サイト</a></li>
+                    <li class="{% block ac_contact_admin %}{% endblock ac_contact_admin %}"><a href="{% url 'home:contact_kind' %}"><i
+                                class="fas fa-envelope"></i>お問い合わせ管理</a></li>
+                    <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <span class="heading">Admin Only</span>
                 <ul class="list-unstyled">
-                    <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
+                    <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i
+                                class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
                 </ul>
                 {% endif %}
             </nav>
@@ -229,6 +241,8 @@
     <script src="{% static 'js/charts-home.js' %}"></script>
     <!-- Main File-->
     <script src="{% static 'js/front.js' %}"></script>
+    <!--Custom File-->
+    <script src="{% static 'js/custom.js' %}"></script>
 </body>
 
 </html>

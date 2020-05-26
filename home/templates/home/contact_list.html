@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+お問い合わせ一覧
+{% endblock title %}
+
+{% block header %}
+お問い合わせ一覧
+<br>{{ contact_kind }}
+{% endblock header %}
+
+{% block ac_contact_admin %}
+active
+{% endblock ac_contact_admin %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:contact_kind' %}">{{ contact_kind.name }}</a>
+    <span class="breadcrumb-item active">一覧</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        お問い合わせ一覧
+    </div>
+    <div class="card-body">
+        <p>
+            種別: {{ contact_kind.name }}
+        </p>
+        <div class="table-responsive">
+            <table class="table table-hover table-clickable text-nowrap">
+                <thead>
+                    <tr>
+                        <th>表題</th>
+                        <th>送信</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contact_list %}
+                    <tr data-href="{% url 'home:contact_detail' contact.pk %}">
+                        <td>{{ contact.title }}</td>
+                        <td>
+                            {{ contact.writer }}
+                            <br>{{ contact.create_datetime }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock contents %}

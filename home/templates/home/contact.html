@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+お問い合わせ
+{% endblock title %}
+
+{% block header %}
+お問い合わせ
+{% endblock header %}
+
+{% block ac_contact %}
+active
+{% endblock ac_contact %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">お問い合わせ</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        11 月祭事務局
+    </div>
+    <div class="card-body">
+        <table class="table table-hover table-clickable">
+            <tbody>
+                <tr
+                    data-href="https://www.google.com/maps/place/%E3%80%92606-8301+%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E5%B7%A6%E4%BA%AC%E5%8C%BA%E5%90%89%E7%94%B0%E6%B3%89%E6%AE%BF%E7%94%BA+%E4%BA%AC%E9%83%BD%E5%A4%A7%E5%AD%A6%E8%A5%BF%E9%83%A8%E6%A7%8B%E5%86%85%E8%AA%B2%E5%A4%96%E6%B4%BB%E5%8B%95%E6%A3%9FB%E6%A3%9F/@35.0271854,135.7786101,19z/data=!4m2!3m1!1s0x600109a9bbf24317:0x7c2fb65d607b58e9">
+                    <td scope="row"><i class="fas fa-map-marked-alt fa-3x"></i></td>
+                    <td>
+                        <h2>11 月祭事務局を訪れる</h2>
+                        <p>〒606-8301 京都府京都市左京区吉田泉殿町 京都大学西部構内 BOX棟B105</p>
+                    </td>
+                </tr>
+                <tr data-href="tel:0757529078">
+                    <td scope="row"><i class="fas fa-phone fa-3x"></i></td>
+                    <td>
+                        <h2>11 月祭事務局に電話する</h2>
+                        <p>075-752-9078</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        お問い合わせフォーム
+    </div>
+    {% if request.user.email %}
+    {% comment %} メールアドレスを登録していない場合はフォーム利用不可 {% endcomment %}
+    <form action="" method="post" class="form">
+        <div class="card-body">
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">お問い合わせをする前にお読みください</h4>
+                <ul class="mb-0">
+                    <li>お問い合わせを行うとあなたのアカウント情報が事務局員に伝達されます。</li>
+                    <li>お問い合わせについて事務局員が返信を行う場合は、原則アカウントに登録したメールアドレス宛に返信を行います。</li>
+                    <li>11 月祭と関係のないお問い合わせに関しては一切対応しません。</li>
+                </ul>
+            </div>
+            {% csrf_token %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.kind %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.title %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.body %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+    {% else %}
+    <div class="card-body">
+        <p>
+            あなたは PENGUIN アカウントにメールアドレスを登録していないので、このフォームを利用できません。
+            直接 office☆nf.la (☆→@) にメールをお送りください。
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock contents %}
