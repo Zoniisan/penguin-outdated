@@ -421,6 +421,14 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
     model = Notification
     success_url = reverse_lazy('home:notification')
 
+    def get(self, request, **kwargs):
+        # 全員送信はスーパーユーザーの専権事項
+        # （この仕様については要検討）
+        if self.kwargs['mode'] == 'all' and not self.request.user.is_superuser:
+            raise PermissionDenied
+
+        return super().get(request, **kwargs)
+
     def form_valid(self, form):
         # sender を登録
         form.instance.sender = self.request.user
@@ -464,12 +472,15 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # 送信モード
+        context['mode'] = self.kwargs['mode']
+
         # 新規作成する場合は自分の担当のみ選択可能
         context['form'].fields['office_group'].queryset = \
             self.request.user.groups.all()
 
-        # URL で Contact の pk が指定された場合は、お問い合わせに対する返信として取り扱う
-        if 'contact_pk' in self.kwargs:
+        if self.kwargs['mode'] == 'reply_to_contact':
+            # Contact に対する返信
             contact = Contact.objects.get(pk=self.kwargs['contact_pk'])
             context['form'].fields['to'].initial = [contact.writer]
             context['form'].fields['title'].initial = \
@@ -480,6 +491,9 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
             context['form'].fields['body'].initial = render_to_string(
                 'home/others/notification_reply_to_contact.txt', body_context
             )
+        elif self.kwargs['mode'] == 'all':
+            # 全員送信
+            context['form'].fields['to'].initial = User.objects.all()
 
         return context
 

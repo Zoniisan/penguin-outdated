@@ -70,7 +70,8 @@
                                 <ul aria-labelledby="notifications" class="dropdown-menu">
                                     {% if all_notification_list %}
                                     {% for notification in all_notification_list %}
-                                    <li><a rel="nofollow" href="{% url 'home:notification_detail' notification.pk %}" class="dropdown-item">
+                                    <li><a rel="nofollow" href="{% url 'home:notification_detail' notification.pk %}"
+                                            class="dropdown-item">
                                             <div class="notification">
                                                 <div class="notification-content">
                                                     {% if notification in read_notification_list %}
@@ -196,6 +197,8 @@
                 <ul class="list-unstyled">
                     <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i
                                 class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
+                    <li> <a href="{% url 'home:notification_all' %}"> <i
+                                class="far fa-bell"></i></i>全員送信（通知Sys.）</a></li>
                 </ul>
                 {% endif %}
             </nav>

@@ -116,6 +116,17 @@ active
             {% endif %}
         </div>
     </div>
+    <div class="row mb-4">
+        <div class="col">
+            {% if request.user.is_superuser %}
+            <a class="btn btn-outline-danger btn-block" href="{% url 'home:notification_all' %}" role="button"><i
+                    class="far fa-bell fa-3x"></i>
+                <hr>全員通知</a>
+            {% endif %}
+        </div>
+        <div class="col">
+        </div>
+    </div>
 </div>
 
 <!--nfoffice twitter-->

@@ -38,12 +38,20 @@ urlpatterns = [
     ),
     path(
         'notification', views.NotificationView.as_view(),
+        {'mode': None},
         name='notification'
     ),
     path(
         'notification/reply_to_contact/<contact_pk>',
         views.NotificationView.as_view(),
+        {'mode': 'reply_to_contact'},
         name='notification_reply_to_contact'
+    ),
+    path(
+        'notification/all',
+        views.NotificationView.as_view(),
+        {'mode': 'all'},
+        name='notification_all'
     ),
     path(
         'notification_staff_list',

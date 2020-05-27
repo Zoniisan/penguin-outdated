@@ -62,8 +62,16 @@ active
                 </p>
             </div>
             {% csrf_token %}
+            {% if mode == 'all' %}
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">全員通知モードです！！</h4>
+                <p class="mb-0">すべてのユーザーに通知が届きます！！</p>
+            </div>
+            {{ form.to.as_hidden }}
+            {% else %}
             <span class="badge badge-danger">必須</span>
             {% bootstrap_field form.to %}
+            {% endif %}
             <span class="badge badge-danger">必須</span>
             {% bootstrap_field form.title %}
             <span class="badge badge-danger">必須</span>
