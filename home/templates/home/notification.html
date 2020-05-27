@@ -10,8 +10,16 @@
 通知システム
 {% endblock header %}
 
-{% block ac_notification %}
+{% block ac_notification_all %}
+{% if mode == 'all' %}
 active
+{% endif %}
+{% endblock ac_notification_all %}
+
+{% block ac_notification %}
+{% if mode != 'all' %}
+active
+{% endif %}
 {% endblock ac_notification %}
 
 {% block extrahead %}
@@ -81,9 +89,15 @@ active
         </div>
         <div class="card-footer">
             {% buttons %}
+            {% if mode == 'all' %}
+            <button type="submit" class="btn btn-danger btn-block">
+                全員に送信する
+            </button>
+            {% else %}
             <button type="submit" class="btn btn-primary btn-block">
                 OK
             </button>
+            {% endif %}
             {% endbuttons %}
         </div>
     </form>

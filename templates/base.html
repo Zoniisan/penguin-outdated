@@ -197,7 +197,7 @@
                 <ul class="list-unstyled">
                     <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i
                                 class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
-                    <li> <a href="{% url 'home:notification_all' %}"> <i
+                    <li class="{% block ac_notification_all %}{% endblock ac_notification_all %}"> <a href="{% url 'home:notification_all' %}"> <i
                                 class="far fa-bell"></i></i>全員送信（通知Sys.）</a></li>
                 </ul>
                 {% endif %}
