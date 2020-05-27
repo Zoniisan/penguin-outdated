@@ -1,4 +1,5 @@
 .vscode
 __pycache__
-settings_env.py
 /static
+.env.db
+.env.web

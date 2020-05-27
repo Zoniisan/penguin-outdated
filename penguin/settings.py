@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-# settings_env.py は create_settings_env.py を実行して作成すること。
-import penguin.settings_env as senv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,10 +21,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = senv.SECRET_KEY
+SECRET_KEY = os.environ.get('SECRET_KEY', 'hoge')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = senv.DEBUG
+DEBUG = int(os.environ.get('DEBUG', 1))
 
 ALLOWED_HOSTS = ['*']
 
@@ -95,11 +93,11 @@ WSGI_APPLICATION = 'penguin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': senv.DB_NAME,
-        'USER': senv.DB_USER,
-        'PASSWORD': senv.DB_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.environ.get('DB_NAME', 'penguin_db'),
+        'USER': os.environ.get('DB_USER', 'penguin'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'penguin_db_password'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': int(os.environ.get('DB_PORT', 5432)),
     }
 }
 
@@ -163,36 +161,37 @@ STATICFILES_DIRS = (
 DATETIME_FORMAT = 'Y/m/d H:i:s'
 DATE_FORMAT = 'Y/m/d'
 
+
 # Email settings
-if senv.EMAIL_CONSOLE:
+if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = senv.EMAIL_HOST
-EMAIL_PORT = senv.EMAIL_PORT
-EMAIL_HOST_USER = senv.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = senv.EMAIL_HOST_PASSWORD
-EMAIL_USE_TLS = senv.EMAIL_USE_TLS
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hoge@hoge.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', True)
+
 
 # Url settings
-BASE_URL = senv.BASE_URL
+BASE_URL = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
 
 
-# login/out settings
+# Login/out settings
 LOGIN_URL = 'home:login'
 LOGIN_REDIRECT_URL = 'home:index'
-# LOGOUT_REDIRECT_URL = 'home:login'
 
 
-# slack settings
-SLACK_TOKEN = senv.SLACK_TOKEN
+# Slack settings
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN', None)
 SLACK_CHANNEL = '#penguin-errors'
 SLACK_USERNAME = 'penguin-bot'
 SLACK_AS_USER = True
 SLACK_FAIL_SILENTLY = False
 if DEBUG:
-    SLACK_BACKEND = 'django_slack.backends.UrllibBackend'
+    SLACK_BACKEND = 'django_slack.backends.ConsoleBackend'
 
 LOGGING = {
     'version': 1,
@@ -217,15 +216,15 @@ LOGGING = {
 }
 
 
-# select2 settings
+# Redis settings
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": senv.CACHES_SELECT2_LOCATION,
+        "LOCATION": os.environ.get(
+            'REDIS_LOCATION', 'redis://localhost:6379/2'
+        ),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
 }
-# Tell select2 which cache configuration to use:
-SELECT2_CACHE_BACKEND = "default"
