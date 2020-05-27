@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+{% load pagination %}
+
+{% block title %}
+送信済み通知一覧
+{% endblock title %}
+
+{% block header %}
+送信済み通知一覧
+{% endblock header %}
+
+{% block ac_notification %}
+active
+{% endblock ac_notification %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:notification' %}">通知システム</a>
+    <span class="breadcrumb-item active">送信済み通知一覧</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        送信済み通知一覧
+    </div>
+    <div class="card-body">
+        {% if page_object.object_list %}
+        <div class="alert alert-info" role="alert">
+            <p>あなたが閲覧できるのは、下記の担当が送信した通知のみです。</p>
+            <ul>
+                {% for group in request.user.groups.all %}
+                <li>{{ group }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-clickable text-nowrap">
+                <thead>
+                    <tr>
+                        <th>件名</th>
+                        <th>送信</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in page_object.object_list %}
+                    <tr data-href="{% url 'home:notification_staff_detail' obj.pk %}">
+                        <td>{{ obj.title }}</td>
+                        <td>
+                            {{ obj.office_group }}
+                            <br>{{ obj.sender }}
+                            <br>{{ obj.create_datetime }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning" role="alert">
+            あなたの担当が送信した通知はありません。
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        {% pagination %}
+    </div>
+</div>
+{% endblock contents %}

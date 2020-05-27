@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+{% load pagination %}
+
+{% block title %}
+受信通知一覧
+{% endblock title %}
+
+{% block header %}
+受信通知一覧
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">受信通知一覧</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        受信通知一覧
+    </div>
+    <div class="card-body">
+        {% if page_object.object_list %}
+        <div class="table-responsive">
+            <table class="table table-hover table-clickable text-nowrap">
+                <thead>
+                    <tr>
+                        <th>既読</th>
+                        <th>件名</th>
+                        <th>送信</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in page_object.object_list %}
+                    <tr data-href="{% url 'home:notification_detail' obj.notification.pk %}">
+                        {% if obj.read %}
+                        <td>
+                            <i class="far fa-envelope-open"></i>
+                        </td>
+                        {% else %}
+                        <td class="table-danger">
+                            <i class="fa fa-envelope"></i>
+                        </td>
+                        {% endif %}
+                        <td>{{ obj.notification.title }}</td>
+                        <td>
+                            {{ obj.notification.office_group }}
+                            <br>{{ obj.notification.sender }}
+                            <br>{{ obj.notification.create_datetime }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning" role="alert">
+            受信した通知はありません。
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        {% pagination %}
+    </div>
+</div>
+{% endblock contents %}

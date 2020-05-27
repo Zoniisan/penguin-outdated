@@ -36,4 +36,43 @@ urlpatterns = [
         'contact_detail/<pk>', views.ContactDetailView.as_view(),
         name='contact_detail'
     ),
+    path(
+        'notification', views.NotificationView.as_view(),
+        name='notification'
+    ),
+    path(
+        'notification/reply_to_contact/<contact_pk>',
+        views.NotificationView.as_view(),
+        name='notification_reply_to_contact'
+    ),
+    path(
+        'notification_staff_list',
+        views.NotificationStaffListView.as_view(),
+        name='notification_staff_list'
+    ),
+    path(
+        'notification_staff_list/p=<page>',
+        views.NotificationStaffListView.as_view(),
+        name='notification_staff_list'
+    ),
+    path(
+        'notification_staff_detail/<pk>',
+        views.NotificationStaffDetailView.as_view(),
+        name='notification_staff_detail'
+    ),
+    path(
+        'notification_list',
+        views.NotificationListView.as_view(),
+        name='notification_list'
+    ),
+    path(
+        'notification_list/p=<page>',
+        views.NotificationListView.as_view(),
+        name='notification_list'
+    ),
+    path(
+        'notification_detail/<pk>',
+        views.NotificationDetailView.as_view(),
+        name='notification_detail'
+    ),
 ]

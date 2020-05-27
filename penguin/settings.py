@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 INSTALLED_APPS += [
     'bootstrap4',
     'bootstrap_datepicker_plus',
-    'django_slack'
+    'django_slack',
+    'django_select2'
 ]
 
 # penguin
@@ -214,3 +215,17 @@ LOGGING = {
         },
     },
 }
+
+
+# select2 settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": senv.CACHES_SELECT2_LOCATION,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+}
+# Tell select2 which cache configuration to use:
+SELECT2_CACHE_BACKEND = "default"

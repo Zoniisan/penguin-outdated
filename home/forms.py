@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django_select2 import forms as s2forms
 
-from home.models import User, UserToken
+from home.models import Notification, User, UserToken
 
 
 class UserTokenForm(forms.ModelForm):
@@ -59,3 +60,33 @@ class LoginForm(AuthenticationForm):
                 self.confirm_login_allowed(self.user_cache)
 
         return self.cleaned_data
+
+
+class NotificationToWidget(s2forms.ModelSelect2MultipleWidget):
+    """通知フォーム/宛先選択 Widget
+    """
+    search_fields = [
+        'username__icontains',
+        'last_name__icontains',
+        'first_name__icontains',
+        'last_name_kana__icontains',
+        'first_name_kana__icontains',
+        'email__icontains',
+    ]
+
+
+class NotificationForm(forms.ModelForm):
+    """通知フォーム
+    """
+    class Meta:
+        model = Notification
+        fields = (
+            'to', 'title', 'body', 'office_group'
+        )
+        widgets = {
+            "to": NotificationToWidget(
+                attrs={
+                    'data-placeholder': '選択して宛先を入力',
+                }
+            ),
+        }

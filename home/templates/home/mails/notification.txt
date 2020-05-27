@@ -1,0 +1,26 @@
+{% extends 'mails/base.txt' %}
+
+{% block contents %}
+{{ user }} 様
+
+11 月祭事務局から通知があります。
+この件に関するお問い合わせは{{ object.office_group }}までお願いいたします。
+
+{{ object.office_group }} メールアドレス
+{{ object.office_group.email }}
+
+詳細はこちら
+{{ base_url }}{% url 'home:notification_detail' object.pk %}
+
+-----------------------
+
+送信者
+{{ object.sender }}
+
+件名
+{{ object.title }}
+
+本文
+{{ object.body }}
+
+{% endblock contents %}

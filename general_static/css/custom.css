@@ -7,3 +7,8 @@
 table.table-clickable tr[data-href] {
     cursor: pointer;
 }
+
+/* select2 使用時の幅を調整 */
+.select2-selection {
+    width: 70vw;
+}

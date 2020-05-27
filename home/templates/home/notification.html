@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+通知システム
+{% endblock title %}
+
+{% block header %}
+通知システム
+{% endblock header %}
+
+{% block ac_notification %}
+active
+{% endblock ac_notification %}
+
+{% block extrahead %}
+{{ form.media.css }}
+<!--select2 使用時の幅を調整-->
+<style>
+    .select2-selection {
+        width: 70vw;
+    }
+</style>
+{% endblock extrahead %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">通知システム</span>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        <p class="card-text">
+            自分の担当に属する事務局員が送信した通知の一覧はこちら
+        </p>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary btn-block" href="{% url 'home:notification_staff_list' %}" role="button">送信済み通知一覧</a>
+    </div>
+</div>
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            通知送信
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                「OK」ボタンを押すと、宛先に通知が送信され、
+                画面上部の「<i class="far fa-bell"></i>」マークから閲覧できるようになります。
+
+                また、宛先のメールアドレスにも同内容が送信されます。
+            </div>
+            <div class="alert alert-warning" role="alert">
+                <p>
+                    宛先は複数人選択できます。複数人に送信してもメールは 1 人 1 通ずつ送られるため、
+                    受信者同士でメールアドレスが共有されることはありません。
+                </p>
+                <p class="mb-0">
+                    宛先は学生番号、名前（ひらがなでも可）、メールアドレスで検索できます。
+                </p>
+            </div>
+            {% csrf_token %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.to %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.title %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.body %}
+            <span class="badge badge-danger">必須</span>
+            {% bootstrap_field form.office_group %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}
+
+{% block extrajs %}
+{{ form.media.js }}
+{% endblock extrajs %}

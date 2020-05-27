@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+通知詳細
+{% endblock title %}
+
+{% block header %}
+通知詳細
+<br>{{ notification.title }}
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:notification_list' %}">{{ notification.title }}</a>
+    <span class="breadcrumb-item active">詳細</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        通知詳細
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <th>表題</th>
+                    <td>{{ notification.title }}</td>
+                </tr>
+                <tr>
+                    <th>本文</th>
+                    <td>{{ notification.body|linebreaksbr }}</td>
+                </tr>
+                <tr>
+                    <th>担当</th>
+                    <td>{{ notification.office_group }}</td>
+                </tr>
+                <tr>
+                    <th>送信者</th>
+                    <td>{{ notification.sender }}</td>
+                </tr>
+                <tr>
+                    <th>送信日時</th>
+                    <td>{{ notification.create_datetime }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        この件に関するお問い合わせは<a
+            href="mailto:{{ notification.office_group.email }}">{{ notification.office_group.email }}</a>にお送りください。
+    </div>
+</div>
+
+{% endblock contents %}

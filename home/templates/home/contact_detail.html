@@ -52,7 +52,8 @@ active
         </table>
     </div>
     <div class="card-footer">
-        <a class="btn btn-primary btn-block" href="#" role="button">返信</a>
+        <a class="btn btn-primary btn-block" href="{% url 'home:notification_reply_to_contact' contact.pk %}"
+            role="button"><i class="fa fa-bell"></i>&nbsp;通知システムで返信</a>
     </div>
 </div>
 
@@ -60,7 +61,7 @@ active
     <div class="card-header">
         送信者詳細
         <div class="float-right">
-            <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#collapseWriterDetail"
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseWriterDetail"
                 aria-expanded="false" aria-controls="collapseWriterDetail">
                 展開
             </button>
@@ -177,10 +178,12 @@ active
     <div class="card-footer">
         <div class="row">
             <div class="col">
-                <a class="btn btn-info btn-block" href="mailto:{{ contact.writer.email }}" role="button"><i class="fas fa-envelope"></i>&nbsp;メール</a>
+                <a class="btn btn-info btn-block" href="mailto:{{ contact.writer.email }}" role="button"><i
+                        class="fas fa-envelope"></i>&nbsp;メール</a>
             </div>
             <div class="col">
-                <a class="btn btn-info btn-block" href="tel:{{ contact.writer.tel }}" role="button"><i class="fas fa-phone"></i>&nbsp;電話</a>
+                <a class="btn btn-info btn-block" href="tel:{{ contact.writer.tel }}" role="button"><i
+                        class="fas fa-phone"></i>&nbsp;電話</a>
             </div>
         </div>
 

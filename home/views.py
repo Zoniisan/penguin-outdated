@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
+from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
@@ -16,8 +17,10 @@ from django.views import generic
 from django_slack import slack_message
 
 from home import forms
-from home.models import Contact, ContactKind, Notice, User, UserToken
+from home.models import (Contact, ContactKind, Notice, Notification,
+                         NotificationRead, User, UserToken)
 from penguin import mixins
+from penguin.functions import set_paging_parameter
 
 
 class IndexView(generic.TemplateView):
@@ -392,7 +395,7 @@ class ContactDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
 
     def get(self, request, **kwargs):
         # 管轄外のスタッフのアクセスを阻止
-        contact = Contact.objects.get(pk=self.kwargs['pk'])
+        contact = get_object_or_404(Contact, pk=self.kwargs['pk'])
 
         if contact.kind.pk \
                 not in get_contact_kind_accesible_pk_list(self):
@@ -404,4 +407,218 @@ class ContactDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['contact'] = Contact.objects.get(pk=self.kwargs['pk'])
+        return context
+
+
+class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
+    """通知システム
+
+    スタッフのみ
+    """
+
+    template_name = 'home/notification.html'
+    form_class = forms.NotificationForm
+    model = Notification
+    success_url = reverse_lazy('home:notification')
+
+    def form_valid(self, form):
+        # sender を登録
+        form.instance.sender = self.request.user
+
+        # save
+        self.object = form.save()
+
+        # 宛先にメールを送信する
+        subject = '通知: %s' % form.instance.title
+
+        from_email = settings.EMAIL_HOST_USER
+
+        context = {
+            'object': self.object,
+            'base_url': settings.BASE_URL,
+        }
+
+        # 同一コネクションで 1 人 1 件ずつ送信
+        # Todo: 非同期送信の実装
+        with mail.get_connection() as connection:
+            for user in self.object.to.all():
+                context['user'] = user
+                message = render_to_string(
+                    'home/mails/notification.txt', context
+                )
+                mail.EmailMessage(
+                    subject,
+                    message,
+                    from_email,
+                    [user.email],
+                    connection=connection
+                ).send()
+
+        # message 発出
+        messages.success(
+            self.request, '通知を送信しました！'
+        )
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 新規作成する場合は自分の担当のみ選択可能
+        context['form'].fields['office_group'].queryset = \
+            self.request.user.groups.all()
+
+        # URL で Contact の pk が指定された場合は、お問い合わせに対する返信として取り扱う
+        if 'contact_pk' in self.kwargs:
+            contact = Contact.objects.get(pk=self.kwargs['contact_pk'])
+            context['form'].fields['to'].initial = [contact.writer]
+            context['form'].fields['title'].initial = \
+                "お問い合わせ「%s」について" % contact.title
+            body_context = {
+                'contact': contact
+            }
+            context['form'].fields['body'].initial = render_to_string(
+                'home/others/notification_reply_to_contact.txt', body_context
+            )
+
+        return context
+
+
+def get_notification_accesible_pk_list(self):
+    """管轄内の通知の pk リストを取得
+
+    ログインしている User が所属している Group を担当に指定した
+    Notification の pk を取得
+    """
+
+    return self.request.user.groups.values_list(
+        'officegroup__notification', flat=True
+    )
+
+
+class NotificationStaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
+    """通知一覧画面（スタッフ向け）
+
+    自分の担当が送信した通知以外は閲覧できない
+    """
+
+    template_name = 'home/notification_staff_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        notification_list = Notification.objects.filter(
+            pk__in=get_notification_accesible_pk_list(self)
+        ).order_by('-create_datetime')
+
+        # ページング処理
+        set_paging_parameter(self.kwargs, context, notification_list)
+        return context
+
+
+class NotificationStaffDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
+    """通知詳細画面（スタッフ向け）
+
+    自分の担当が送信した通知以外は閲覧できない
+    """
+
+    template_name = 'home/notification_staff_detail.html'
+
+    def get(self, request, **kwargs):
+        if int(self.kwargs['pk']) not in \
+                get_notification_accesible_pk_list(self):
+            raise PermissionDenied
+
+        return super().get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 通知
+        notification = Notification.objects.get(
+            pk=self.kwargs['pk']
+        )
+        context['notification'] = notification
+
+        # 既読リスト
+        to_list = list()
+        for user in notification.to.all():
+            try:
+                notification_read = NotificationRead.objects.get(
+                    notification=notification,
+                    user=user
+                )
+                to_list.append({
+                    'user': user,
+                    'read': notification_read
+                })
+            except NotificationRead.DoesNotExist:
+                to_list.append({
+                    'user': user,
+                    'read': None
+                })
+
+        context['to_list'] = to_list
+
+        return context
+
+
+class NotificationListView(LoginRequiredMixin, generic.TemplateView):
+    """通知一覧画面
+
+    自分宛ての通知のみ閲覧できる
+    """
+
+    template_name = 'home/notification_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 自分宛ての通知のリスト
+        notification_list = Notification.objects.filter(
+            to=self.request.user
+        ).order_by('-create_datetime')
+
+        # 自分宛ての通知とその既読状況の辞書を投げる
+        obj_list = [
+            {
+                'notification': n,
+                'read': n.has_read(self.request.user)
+            } for n in notification_list
+        ]
+
+        # ページング処理
+        set_paging_parameter(self.kwargs, context, obj_list)
+        return context
+
+
+class NotificationDetailView(LoginRequiredMixin, generic.TemplateView):
+    """通知詳細画面
+
+    自分の受信した通知以外は閲覧できない
+    """
+
+    template_name = 'home/notification_detail.html'
+
+    def get(self, request, **kwargs):
+        # 自分が受信した通知以外は閲覧できない
+        notification = get_object_or_404(Notification, pk=self.kwargs['pk'])
+        if self.request.user not in notification.to.all():
+            raise PermissionDenied
+
+        # 初閲覧の場合は既読記録を残す
+        read, created = NotificationRead.objects.get_or_create(
+            user=self.request.user, notification=notification
+        )
+        read.save()
+
+        return super().get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 通知
+        notification = get_object_or_404(Notification, pk=self.kwargs['pk'])
+        context['notification'] = notification
+
         return context

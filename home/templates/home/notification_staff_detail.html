@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+通知詳細
+{% endblock title %}
+
+{% block header %}
+通知詳細
+<br>{{ notification.title }}
+{% endblock header %}
+
+{% block ac_notification %}
+active
+{% endblock ac_notification %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:notification' %}">通知システム</a>
+    <a class="breadcrumb-item" href="{% url 'home:notification_staff_list' %}">{{ notification.title }}</a>
+    <span class="breadcrumb-item active">詳細</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        通知詳細
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <th>表題</th>
+                    <td>{{ notification.title }}</td>
+                </tr>
+                <tr>
+                    <th>本文</th>
+                    <td>{{ notification.body|linebreaksbr }}</td>
+                </tr>
+                <tr>
+                    <th>担当</th>
+                    <td>{{ notification.office_group }}</td>
+                </tr>
+                <tr>
+                    <th>送信者</th>
+                    <td>{{ notification.sender }}</td>
+                </tr>
+                <tr>
+                    <th>送信日時</th>
+                    <td>{{ notification.create_datetime }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="readAcordianId" role="tablist" aria-multiselectable="true">
+    <div class="card">
+        <div class="card-header" role="tab" id="bodyHeaderId">
+            受信者・既読情報
+            <div class="float-right">
+                <a data-toggle="collapse" data-parent="#readAcordianId" href="#readContentId" aria-expanded="true"
+                    aria-controls="readContentId" class="btn btn-primary">
+                    展開
+                </a>
+            </div>
+        </div>
+        <div id="readContentId" class="collapse in" role="tabpanel" aria-labelledby="readHeaderId">
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <p class="mb-0">
+                        「既読」記録は PENGUIN 上で閲覧した場合に登録されます。
+                        通知の送信と同時にメールも送信されていますが、メールを閲覧しただけでは既読記録が登録されません。
+                    </p>
+                </div>
+                <div class="table-responsive">
+                    <table class="table text-nowrap">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ユーザー</th>
+                                <th>メールアドレス</th>
+                                <th>電話番号</th>
+                                <th>既読（開封日時）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in to_list %}
+                            <tr>
+                                {% if obj.read %}
+                                <td>
+                                    <i class="far fa-envelope-open"></i>
+                                </td>
+                                {% else %}
+                                <td class="table-danger">
+                                    <i class="fa fa-envelope"></i>
+                                </td>
+                                {% endif %}
+                                <td>{{ obj.user }}</td>
+                                <td><a href="mailto:{{ obj.user.email }}">{{ obj.user.email }}</a></td>
+                                <td><a href="tel:{{ obj.user.tel }}">{{ obj.user.tel }}</a></td>
+                                <td>
+                                    {% if obj.read %}
+                                    既読<br>{{ obj.read.create_datetime }}
+                                    {% else %}
+                                    未読
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contents %}

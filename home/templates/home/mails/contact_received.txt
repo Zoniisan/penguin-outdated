@@ -16,6 +16,6 @@
 {{ contact.title }}
 
 本文
-{{ contact.body }}
+{{ contact.body|linebreaksbr }}
 
 {% endblock contents %}

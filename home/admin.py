@@ -154,3 +154,54 @@ class ContactKindAdmin(admin.ModelAdmin):
     autocomplete_fields = (
         'office_groups',
     )
+
+
+@admin.register(models.Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    """ [Admin] 通知
+    """
+    fieldsets = (
+        ('内容', {'fields': ('title', 'body', 'office_group')}),
+        ('送受信情報', {'fields': ('to', 'sender', 'create_datetime')}),
+    )
+
+    list_display = (
+        'title', 'sender', 'office_group', 'create_datetime'
+    )
+
+    search_fields = (
+        'title',
+    )
+
+    autocomplete_fields = (
+        'to', 'sender'
+    )
+
+    readonly_fields = (
+        'create_datetime',
+    )
+
+
+@admin.register(models.NotificationRead)
+class NotificationReadAdmin(admin.ModelAdmin):
+    """ [Admin] 通知既読
+    """
+    fieldsets = (
+        ('None', {'fields': ('notification', 'user', 'create_datetime')}),
+    )
+
+    list_display = (
+        'notification', 'user', 'create_datetime'
+    )
+
+    search_fields = (
+        'notification',
+    )
+
+    autocomplete_fields = (
+        'notification', 'user'
+    )
+
+    readonly_fields = (
+        'create_datetime',
+    )

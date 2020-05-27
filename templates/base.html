@@ -1,5 +1,6 @@
 {% load static %}
 {% load bootstrap4 %}
+{% load get_notifications %}
 
 <!DOCTYPE html>
 <html>
@@ -30,6 +31,9 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <!-- Extra Head -->
+    {% block extrahead %}
+    {% endblock extrahead %}
 </head>
 
 <body>
@@ -51,44 +55,44 @@
                         </div>
                         <!-- Navbar Menu -->
                         <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                            <li class='d-none d-xl-block'>PErsonal New-generation Graphic User Interface for November
+                                festival</li>
                             {% if request.user.is_authenticated %}
                             <!-- Notifications-->
+                            {% get_notifications %}
                             <li class="nav-item dropdown"> <a id="notifications" rel="nofollow" data-target="#" href="#"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                    class="nav-link"><i class="fa fa-bell-o"></i><span
-                                        class="badge bg-red badge-corner">12</span></a>
+                                    class="nav-link"><i class="fa fa-bell-o"></i>
+                                    {% if unread_count %}
+                                    <span class="badge bg-red badge-corner">{{ unread_count }}</span>
+                                    {% endif %}
+                                </a>
                                 <ul aria-labelledby="notifications" class="dropdown-menu">
-                                    <li><a rel="nofollow" href="#" class="dropdown-item">
+                                    {% if all_notification_list %}
+                                    {% for notification in all_notification_list %}
+                                    <li><a rel="nofollow" href="{% url 'home:notification_detail' notification.pk %}" class="dropdown-item">
                                             <div class="notification">
-                                                <div class="notification-content"><i
-                                                        class="fa fa-envelope bg-green"></i>You have 6 new messages
+                                                <div class="notification-content">
+                                                    {% if notification in read_notification_list %}
+                                                    <i class="far fa-envelope-open bg-gray"></i>
+                                                    {{ notification.title }}
+                                                    {% else %}
+                                                    <i class="fa fa-envelope bg-red"></i>
+                                                    <b>{{ notification.title }}</b>
+                                                    {% endif %}
                                                 </div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
+                                                <div class="notification-time">
+                                                    <small>{{ notification.create_datetime }}</small></div>
                                             </div>
                                         </a></li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i
-                                                        class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
-                                            </div>
-                                        </a></li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i
-                                                        class="fa fa-upload bg-orange"></i>Server Rebooted</div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
-                                            </div>
-                                        </a></li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i
-                                                        class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
-                                                <div class="notification-time"><small>10 minutes ago</small></div>
-                                            </div>
-                                        </a></li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center">
-                                            <strong>view all notifications </strong></a></li>
+                                    {% endfor %}
+                                    <li><a rel="nofollow" href="{% url 'home:notification_list' %}"
+                                            class="dropdown-item all-notifications text-center">
+                                            <strong>すべて見る</strong></a></li>
+                                    {% else %}
+                                    <li><span rel="nofollow" class="dropdown-item all-notifications text-center">
+                                            <strong>通知はありません</strong></span></li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             <!-- Logout    -->
@@ -117,6 +121,7 @@
                         </div>
                         <div class="modal-body">
                             ログアウトする場合は、「ログアウト」を押してください。
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">とじる</button>
@@ -179,8 +184,10 @@
                 {% if request.user.is_staff %}
                 <span class="heading">Staff Only</span>
                 <ul class="list-unstyled">
-                    <li class="{% block ac_contact_admin %}{% endblock ac_contact_admin %}"><a href="{% url 'home:contact_kind' %}"><i
-                                class="fas fa-envelope"></i>お問い合わせ管理</a></li>
+                    <li class="{% block ac_contact_admin %}{% endblock ac_contact_admin %}"><a
+                            href="{% url 'home:contact_kind' %}"><i class="fas fa-envelope"></i>お問い合わせ管理</a></li>
+                    <li class="{% block ac_notification %}{% endblock ac_notification %}"><a
+                            href="{% url 'home:notification' %}"><i class="fas fa-bell"></i>通知システム</a></li>
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}
@@ -243,6 +250,9 @@
     <script src="{% static 'js/front.js' %}"></script>
     <!--Custom File-->
     <script src="{% static 'js/custom.js' %}"></script>
+    <!-- Extra JS -->
+    {% block extrajs %}
+    {% endblock extrajs %}
 </body>
 
 </html>
