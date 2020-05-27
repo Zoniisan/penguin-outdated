@@ -10,8 +10,8 @@
 ## How to install and run
 1. `git clone git@github.com:Zoniisan/penguin.git`
 1. **環境変数ファイルを作成する必要があります**。
-    * `python create_env_file.py` を実行すればいい感じに作ってくれます。
-    * ただし本番環境でなければ何も考えずに Enter を連打すればいいはずです。
+    * `python3 create_env_file.py` を実行すればいい感じに作ってくれます。
+    * 本番環境でなければ何も考えずに Enter を連打すればいいはずです。
     * `DEBUG=True` の場合はメールと slack で送信されるべき情報が標準出力に
     流れるので、メールや slack に関する設定は適当で大丈夫です。
 1. `docker-compose up`
