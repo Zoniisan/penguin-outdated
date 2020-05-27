@@ -8,7 +8,7 @@
 * python (環境変数ファイルを作成するのに使います)
 
 ## How to install and run
-1. `git clone git@github.com:Zoniisan/nf-penguin.git`
+1. `git clone git@github.com:Zoniisan/penguin.git`
 1. **環境変数ファイルを作成する必要があります**。
     * `python create_env_file.py` を実行すればいい感じに作ってくれます。
     * ただし本番環境でなければ何も考えずに Enter を連打すればいいはずです。
