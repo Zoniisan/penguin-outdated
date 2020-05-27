@@ -25,6 +25,7 @@
 ## Post-install
 * 最初は何もデータが入っていませんが、下記のコマンドを入力することで最低限のデータが入力されます。
     * `docker-compose exec web python manage.py create_models_for_dev`
+* `127.0.0.1:8000` にアクセスすれば PENGUIN が起動します。
 
 ### 入力されるデータ
 * `home.User`
