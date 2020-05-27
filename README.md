@@ -5,7 +5,7 @@
 
 ## Prerequirements
 * docker-compose
-* python (環境変数ファイルを作成するのに使います)
+* python3 (環境変数ファイルを作成するのに使います)
 
 ## How to install and run
 1. `git clone git@github.com:Zoniisan/penguin.git`
@@ -27,7 +27,7 @@
     * `docker-compose exec web python manage.py create_models_for_dev`
 
 ### 入力されるデータ
-* `home.Users`
+* `home.User`
     * パスワードはすべて `hogehoge` です
     * 学生番号 `9000000000` でスーパーユーザーとしてログインできます
         * 全権を持ちます
