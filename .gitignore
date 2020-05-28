@@ -5,3 +5,4 @@ __pycache__
 .env.db.prod
 .env.web
 .env.web.prod
+docker-compose.prod.yml
