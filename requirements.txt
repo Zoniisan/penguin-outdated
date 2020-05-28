@@ -17,6 +17,7 @@ django-select2==7.4.2
 django-slack==5.14.3
 django-timezone-field==4.0
 flake8==3.8.1
+gunicorn==20.0.4
 idna==2.9
 kombu==4.6.8
 mccabe==0.6.1

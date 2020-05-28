@@ -163,10 +163,10 @@ DATE_FORMAT = 'Y/m/d'
 
 
 # Email settings
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 迷惑メールの送信を防ぐため、メールは原則コンソール表示とする
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend'
+)
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
