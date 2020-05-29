@@ -31,9 +31,22 @@
         * SLACK については `nf-penguin-test.slack.com` に実際に届きます。参加したい人は Twitter にどうぞ。
 
 ## Post-install
-* 最初は何もデータが入っていませんが、下記のコマンドを入力することで最低限のデータが入力されます。
-    * `docker-compose exec web python manage.py create_models_for_dev`
-* `127.0.0.1:8000` にアクセスすれば PENGUIN が起動します。
+* 最初は何もデータが入っていません。
+* まずは `docker-compose exec web python manage.py createsuperuser` でシステム管理者を作ります
+* 次に `docker-compose exec web python manage.py create_many_users` でユーザーを作ります
+    * この操作は開発用に架空のユーザーを作るコマンドで、実運用で使用する見込みはありません。
+* システム管理者でログインし、メニューから CSV 処理→Group, GroupInfo を選択します
+* このリポジトリの `csv/initial_group.csv` をアップロードして OK を押します
+    * 事務局の部局担当が登録されます
+    * そのあと `docker-compose exec web python manage.py reorder home.GroupInfo` します
+* 次に CSV 処理→ContactKind を選択し、`csv/initial_contact_kind` をアップロードします
+    * お問い合わせの種類が登録されます
+    * そのあと `docker-compose exec web python manage.py reorder home.ContactKind` します
+* 次に CSV 処理→Staff登録 を選択し、`csv/initial_staff` をアップロードします
+    * `username = 30000000[0-9]{2}` のユーザーがスタッフになり、部局担当に所属します
+* 実際の運用でもこの方法でデータ登録を行う見込みです
+    * 最初だけ大変だけどあまり変化のないデータの登録はこの方法でやりたい
+    * 何か他にいい方法があればおしえてください
 
 ### 入力されるデータ
 * `home.User`
@@ -47,20 +60,13 @@
         データにより判別していました。
         * 「生徒以外は統一テーマ投票に投票できなくする」などの条件分岐の実装が必要になります。
     * 学生番号 `30000000[0-9]{2}` はスタッフユーザー（事務局員）です。
-        * `300000000[01]` はシステム担当です。
-        * `300000001[01]` は幹部です。
 * `auth.Group`
-    * 「システム担当」「幹部」が作成されます
+    * 事務局内の部局です
 * `home.OfficeGroup`
     * `auth.Group` を拡張する OneToOne モデルです
-    * 「システム担当」「幹部」に対応するメールアドレスと slack ch. が登録されます
+    * 各部局に対応するメールアドレスと slack ch. が登録されます
 * `home.ContactKind`
     * お問い合わせの種類を登録します
-    * 「11 月祭全般について」 = システム担当, 幹部のみが閲覧可
-    * 「バグ報告」 = システム担当のみが閲覧可
-    * 「個人情報の変更依頼」 = システム担当のみが閲覧可
-
-* データの永続化を行っているので、`docker-compose down` しても大丈夫です。
 
 ## Current Situation
 * ユーザー認証

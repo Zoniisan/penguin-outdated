@@ -10,9 +10,14 @@ from home.models import User
 class Command(BaseCommand):
     """[Command] create_many_users
 
-    一般アカウント 200 件と事務局員アカウント 200 件を作成します。
-    一般アカウントのうち、shib_faculty = student のものは 100 件、
-    faculty のものは 100 件作成されます。
+    User モデルを大量に作成します。学生番号は
+    10000000[0-9]{2}: 一般京大生
+    20000000[0-9]{2}: 教授など（shib_affiliation='faculty')
+    30000000[0-9]{2}: 事務局員
+    です。ただし、事務局員のスタッフ権限は CSV 機能を用いて与えるため、
+    ここでは一般アカウントとして作成します。
+    また、システム管理者（スーパーユーザー）は manage.py createsuperuser
+    で作成することが想定されているため、ここでは作成しません。
 
     パスワードはすべて 'hogehoge' です。
     """
@@ -26,11 +31,11 @@ class Command(BaseCommand):
             u = User.objects.create(
                 username='10000000%s' % zfilled_i,
                 last_name='生徒',
-                first_name=zfilled_i,
+                first_name='テスト%s' % zfilled_i,
                 last_name_kana='せいと',
                 first_name_kana='てすと',
-                email='test@student%s.com' % zfilled_i,
-                tel='100000000%s' % zfilled_i,
+                email='student%s@test.com' % zfilled_i,
+                tel='090100000%s' % zfilled_i,
                 faculty='総',
                 grade='B1',
                 shib_eptid='ept_student_%s' % zfilled_i,
@@ -46,11 +51,11 @@ class Command(BaseCommand):
             u = User.objects.create(
                 username='20000000%s' % zfilled_i,
                 last_name='先生',
-                first_name=zfilled_i,
+                first_name='テスト%s' % zfilled_i,
                 last_name_kana='せんせい',
                 first_name_kana='てすと',
-                email='test@faculty%s.com' % zfilled_i,
-                tel='20000000%s' % zfilled_i,
+                email='faculty%s@test.com' % zfilled_i,
+                tel='090200000%s' % zfilled_i,
                 faculty='総',
                 grade='他',
                 shib_eptid='ept_faculty_%s' % zfilled_i,
@@ -66,16 +71,15 @@ class Command(BaseCommand):
             u = User.objects.create(
                 username='30000000%s' % zfilled_i,
                 last_name='事務局員',
-                first_name=zfilled_i,
+                first_name='テスト%s' % zfilled_i,
                 last_name_kana='じむきょくいん',
                 first_name_kana='てすと',
-                email='test@office%s.com' % zfilled_i,
-                tel='30000000%s' % zfilled_i,
+                email='office%s@test.com' % zfilled_i,
+                tel='090300000%s' % zfilled_i,
                 faculty='総',
                 grade='B1',
                 shib_eptid='ept_officer_%s' % zfilled_i,
                 shib_affiliation="student",
-                is_staff=True
             )
             u.set_password('hogehoge')
             u.save()
