@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.validators import FileExtensionValidator
 from django_select2 import forms as s2forms
 
 from home.models import Notification, User, UserToken
@@ -90,3 +91,12 @@ class NotificationForm(forms.ModelForm):
                 }
             ),
         }
+
+
+class CsvRegisterForm(forms.Form):
+    """CSV データ登録用のフォーム
+    """
+    csvfile = forms.FileField(
+        label='CSV データ',
+        validators=[FileExtensionValidator(['csv', ])],
+    )

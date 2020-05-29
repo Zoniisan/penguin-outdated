@@ -1,3 +1,5 @@
+import csv
+import io
 import random
 import string
 from datetime import datetime, timedelta
@@ -11,7 +13,8 @@ from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.db import IntegrityError
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -19,7 +22,7 @@ from django.views import generic
 from django_slack import slack_message
 
 from home import forms
-from home.models import (Contact, ContactKind, Notice, Notification,
+from home.models import (Contact, ContactKind, GroupInfo, Notice, Notification,
                          NotificationRead, User, UserToken)
 from penguin import mixins
 from penguin.functions import set_paging_parameter
@@ -688,7 +691,7 @@ def download_staff_vcards(request, mode):
 
     # vcf ファイル作成
     context = {
-            'user_list': user_list
+        'user_list': user_list
     }
     content = render_to_string(
         'home/others/vcards_template.txt', context
@@ -700,3 +703,242 @@ def download_staff_vcards(request, mode):
         'attachment; filename="nfoffice_vcards.vcf"'
 
     return response
+
+
+class CsvRegisterView(mixins.AdminOnlyMixin, generic.FormView):
+    """csv register: Group, GroupInfo, ContactKind などを CSV ファイルから登録
+
+    スーパーユーザーのみ実行可能
+    初回起動時に実行することを想定。ただし後からこの機能を用いて
+    モデルを追加することも可能。
+    ただし、Shibboleth 環境下において User を追加することはやらないほうがいい。
+    """
+
+    template_name = 'home/csv_register.html'
+    form_class = forms.CsvRegisterForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        mode = self.kwargs['mode']
+
+        if mode == 'group':
+            context['model'] = 'auth.Group, home.GroupInfo'
+            context['header'] = \
+                'Group.name, GroupInfo.email,GroupInfo.slack_ch'
+            context['example'] = \
+                '総合対応局 システム担当,system@penguin-test.com, system'
+            context['note'] = (
+                'GroupInfo は admin サイトで並び替えができます。'
+                '並び替えする場合はあらかじめコンテナで '
+                'python manage.py reorder home.GroupInfo を実行してください。'
+            )
+
+        elif mode == 'contact_kind':
+            context['model'] = 'home.ContactKind'
+            context['header'] = 'name,groups'
+            context['example'] = 'その他,knb kkkmc system'
+            context['note'] = (
+                'groups は home.Group の slack_ch で指定してください。'
+                'また、複数指定可能です。'
+                '複数指定する場合は「半角スペース区切り」で入力してください。'
+                'ContactKind は admin サイトで並び替えができます。'
+                '並び替えする場合はあらかじめコンテナで '
+                'python manage.py reorder home.ContactKind を実行してください。'
+            )
+
+        elif mode == 'staff':
+            context['model'] = 'home.User（スタッフ登録）'
+            context['header'] = 'username,groups'
+            context['example'] = '1029290000,system kkkmc'
+            context['note'] = (
+                'username で指定した User をスタッフに昇格させます。'
+                'groups は home.Group の slack_ch で指定してください。'
+                'また、複数指定可能です。'
+                '複数指定する場合は「半角スペース区切り」で入力してください。'
+            )
+
+        else:
+            raise Http404
+
+        return context
+
+    def form_valid(self, form):
+        csvfile = io.TextIOWrapper(form.cleaned_data['csvfile'])
+        reader = csv.reader(csvfile)
+
+        if self.kwargs['mode'] == 'group':
+            for row in reader:
+                # fetch data from csvfile
+                name = row[0]
+                email = row[1]
+                slack_ch = row[2]
+
+                try:
+                    # create auth.Group
+                    group, created = Group.objects.get_or_create(
+                        name=name
+                    )
+                    group.save()
+
+                    if created:
+                        messages.success(
+                            self.request,
+                            'Created: auth.Group: name=%s' % name
+                        )
+
+                    else:
+                        messages.info(
+                            self.request,
+                            'Passed: auth.Group: name=%s（すでに存在します）' % name
+                        )
+
+                    # create home.GroupInfo
+                    group_info, created = GroupInfo.objects. get_or_create(
+                        group=group,
+                        email=email,
+                        slack_ch=slack_ch
+                    )
+                    group_info.save()
+
+                    if created:
+                        messages.success(
+                            self.request,
+                            'Created: home.GroupInfo: name=%s' % name
+                        )
+
+                    else:
+                        messages.info(
+                            self.request,
+                            'Passed: auth.GroupInfo: name=%s（すでに存在します）' % name
+                        )
+
+                except IntegrityError:
+                    messages.error(
+                        self.request,
+                        (
+                            'Error: auth.Group: name=%s'
+                            '（すでに同じ名前の group がありませんか？）' % name
+                        )
+                    )
+
+        elif self.kwargs['mode'] == 'contact_kind':
+            for row in reader:
+                # fetch data from csvfile
+                name = row[0]
+                group_slack_ch_list = row[1].split(' ')
+
+                try:
+                    group_list = [
+                        Group.objects.get(groupinfo__slack_ch=slack_ch)
+                        for slack_ch in group_slack_ch_list
+                    ]
+                    # create home.ContactKind
+                    contact_kind, created = ContactKind.objects.get_or_create(
+                        name=name
+                    )
+                    contact_kind.groups.add(*group_list)
+                    contact_kind.save()
+
+                    if created:
+                        messages.success(
+                            self.request,
+                            'Created: home.ContactKind: name=%s' % name
+                        )
+                    else:
+                        messages.info(
+                            self.request,
+                            'Passed: home.ContactKind: name=%s（すでに存在します）'
+                            % name
+                        )
+
+                except Group.DoesNotExist:
+                    messages.error(
+                        self.request,
+                        (
+                            'Error: home.ContactKind: name=%s'
+                            '（slack_id を確認してください）'
+                        ) % name
+                    )
+
+        elif self.kwargs['mode'] == 'staff':
+            for row in reader:
+                # fetch data from csvfile
+                username = str(row[0])
+                group_slack_ch_list = row[1].split(' ')
+
+                try:
+                    group_list = [
+                        Group.objects.get(groupinfo__slack_ch=slack_ch)
+                        for slack_ch in group_slack_ch_list
+                    ]
+                    # get User
+                    user = User.objects.get(username=username)
+
+                    # 一度すべての部局への所属を解除した後、CSV のデータに
+                    # 記載された部局に所属させる
+                    user.groups.clear()
+                    user.groups.add(*group_list)
+
+                    # スタッフ権限を与える
+                    user.is_staff = True
+
+                    user.save()
+
+                    messages.success(
+                        self.request,
+                        'Welcome to Staff World!: user=%s' % user
+                    )
+
+                except Group.DoesNotExist:
+                    messages.error(
+                        self.request,
+                        (
+                            'Error: user=%s'
+                            '（slack_id を確認してください）'
+                        ) % user
+                    )
+
+                except User.DoesNotExist:
+                    messages.error(
+                        self.request,
+                        (
+                            'Error: username=%s'
+                            '（username を確認してください）'
+                        ) % username
+                    )
+
+        return redirect('home:csv_register_finish', mode=self.kwargs['mode'])
+
+
+class CsvRegisterFinishView(mixins.AdminOnlyMixin, generic.TemplateView):
+    """csv register: 登録完了画面
+
+    スーパーユーザーのみ実行可能
+    """
+
+    template_name = 'home/csv_register_finish.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        mode = self.kwargs['mode']
+
+        if mode == 'group':
+            context['model'] = 'auth.Group, home.GroupInfo'
+            context['object_list'] = Group.objects.all()
+
+        elif mode == 'contact_kind':
+            context['model'] = 'home.ContactKind'
+            context['object_list'] = ContactKind.objects.all()
+
+        elif mode == 'staff':
+            context['model'] = 'home.User'
+            context['object_list'] = User.objects.filter(is_staff=True)
+
+        else:
+            raise Http404
+
+        context['mode'] = mode
+
+        return context

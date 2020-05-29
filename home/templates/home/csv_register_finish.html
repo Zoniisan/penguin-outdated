@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+CSV 処理完了
+{% endblock title %}
+
+{% block header %}
+CSV 処理完了（実行ログ）
+<hr>すべて成功→
+<br>admin サイトで並び替えられるモデルはコンテナ上で <span class="text-danger">python manage.py reorder {app_name}.{model_name}</span> 実行
+<hr>{{ model }}
+{% endblock header %}
+
+{% block contents %}
+<div class="card">
+    <div class="card-header">
+        現在のデータ一覧
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tbody>
+                {% for object in object_list %}
+                <tr>
+                    <td>{{ object }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock contents %}

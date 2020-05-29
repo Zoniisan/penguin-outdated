@@ -93,4 +93,14 @@ urlpatterns = [
         views.download_staff_vcards,
         name='download_staff_vcards'
     ),
+    path(
+        'csv_register/<mode>',
+        views.CsvRegisterView.as_view(),
+        name='csv_register'
+    ),
+    path(
+        'csv_register_finish/<mode>',
+        views.CsvRegisterFinishView.as_view(),
+        name='csv_register_finish'
+    ),
 ]

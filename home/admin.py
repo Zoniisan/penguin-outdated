@@ -82,7 +82,7 @@ class GroupInfoAdmin(SortableAdminMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'group_name', 'email', 'slack_ch', 'group',
+        'group_name', 'email', 'slack_ch'
     )
 
     search_fields = (
