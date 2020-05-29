@@ -1,3 +1,4 @@
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 
@@ -62,7 +63,7 @@ class UserTokenAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.GroupInfo)
-class GroupInfoAdmin(admin.ModelAdmin):
+class GroupInfoAdmin(SortableAdminMixin, admin.ModelAdmin):
     """ [Admin] 部局担当
     """
 
@@ -81,7 +82,7 @@ class GroupInfoAdmin(admin.ModelAdmin):
     )
 
     list_display = (
-        'group_name', 'email', 'slack_ch', 'group'
+        'group_name', 'email', 'slack_ch', 'group',
     )
 
     search_fields = (
@@ -90,6 +91,10 @@ class GroupInfoAdmin(admin.ModelAdmin):
 
     autocomplete_fields = (
         'group',
+    )
+
+    readonly_fields = (
+        'order',
     )
 
 
@@ -146,15 +151,22 @@ class ContactAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ContactKind)
-class ContactKindAdmin(admin.ModelAdmin):
+class ContactKindAdmin(SortableAdminMixin, admin.ModelAdmin):
     """ [Admin] お問い合わせ種別
     """
+
+    def list_groups(self, obj):
+        """管轄する部局担当を一覧表示
+        """
+        return ", ".join(obj.groups.values_list('name', flat=True))
+    list_groups.short_description = '管轄'
+
     fieldsets = (
         (None, {'fields': ('name', 'groups')}),
     )
 
     list_display = (
-        'name',
+        'name', 'list_groups'
     )
 
     search_fields = (

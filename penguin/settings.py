@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
 # plugin
 INSTALLED_APPS += [
+    'adminsortable2',
     'bootstrap4',
     'bootstrap_datepicker_plus',
     'django_slack',

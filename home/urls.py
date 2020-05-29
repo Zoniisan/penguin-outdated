@@ -83,4 +83,14 @@ urlpatterns = [
         views.NotificationDetailView.as_view(),
         name='notification_detail'
     ),
+    path(
+        'staff_list',
+        views.StaffListView.as_view(),
+        name='staff_list'
+    ),
+    path(
+        'download_staff_vcards/<mode>',
+        views.download_staff_vcards,
+        name='download_staff_vcards'
+    ),
 ]

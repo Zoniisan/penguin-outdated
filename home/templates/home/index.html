@@ -103,11 +103,20 @@ active
     <div class="row mb-4">
         <div class="col">
             {% if request.user.is_staff %}
+            <a class="btn btn-outline-success btn-block" href="{% url 'home:staff_list' %}" role="button"><i
+                    class="fas fa-th-list fa-3x"></i>
+                <hr>事務局員名簿</a>
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if request.user.is_staff %}
             <a class="btn btn-outline-success btn-block" href="/admin" role="button"><i
                     class="fas fa-database fa-3x"></i>
                 <hr>管理サイト</a>
             {% endif %}
         </div>
+    </div>
+    <div class="row mb-4">
         <div class="col">
             {% if request.user.is_superuser %}
             <a class="btn btn-outline-danger btn-block" href="{% url 'home:notice' %}" role="button"><i
@@ -115,16 +124,12 @@ active
                 <hr>お知らせ管理</a>
             {% endif %}
         </div>
-    </div>
-    <div class="row mb-4">
         <div class="col">
             {% if request.user.is_superuser %}
             <a class="btn btn-outline-danger btn-block" href="{% url 'home:notification_all' %}" role="button"><i
                     class="far fa-bell fa-3x"></i>
                 <hr>全員通知</a>
             {% endif %}
-        </div>
-        <div class="col">
         </div>
     </div>
 </div>

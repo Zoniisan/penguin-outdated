@@ -5,11 +5,13 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core import mail
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -636,3 +638,65 @@ class NotificationDetailView(LoginRequiredMixin, generic.TemplateView):
         context['notification'] = notification
 
         return context
+
+
+class StaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
+    """事務局員名簿
+
+    スタッフ専用
+    """
+
+    template_name = 'home/staff_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 事務局員名簿を作成
+        # 部局担当別、学年・氏名読みがな順でリストを作成
+        context['object_list'] = [
+            {
+                'group': group,
+                'member_list': group.user_set.all().order_by(
+                    '-grade', 'last_name_kana', 'first_name_kana'
+                )
+            }
+            for group in Group.objects.all().order_by('groupinfo__order')
+        ]
+
+        return context
+
+
+def download_staff_vcards(request, mode):
+    """事務局員の連絡先を vcard 形式でダウンロード
+
+    スタッフ専用
+    """
+
+    # アクセスはスタッフのみ
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    # URL から受け取ったモードに基づきデータをフィルタリング
+    if mode == 'all':
+        user_list = User.objects.filter(is_staff=True)
+    elif mode == 'b1':
+        user_list = User.objects.filter(is_staff=True, grade='B1')
+    elif mode == 'b2':
+        user_list = User.objects.filter(is_staff=True, grade='B2')
+    elif mode == 'b3':
+        user_list = User.objects.filter(is_staff=True, grade='B3')
+
+    # vcf ファイル作成
+    context = {
+            'user_list': user_list
+    }
+    content = render_to_string(
+        'home/others/vcards_template.txt', context
+    )
+
+    # ファイルはサーバーに残さない（危なっかしいので）
+    response = HttpResponse(content, content_type='text/plain')
+    response['Content-Disposition'] = \
+        'attachment; filename="nfoffice_vcards.vcf"'
+
+    return response

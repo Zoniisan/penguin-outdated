@@ -189,6 +189,8 @@
                             href="{% url 'home:contact_kind' %}"><i class="fas fa-envelope"></i>お問い合わせ管理</a></li>
                     <li class="{% block ac_notification %}{% endblock ac_notification %}"><a
                             href="{% url 'home:notification' %}"><i class="fas fa-bell"></i>通知システム</a></li>
+                    <li class="{% block ac_staff_list %}{% endblock ac_staff_list %}"><a
+                            href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}
@@ -197,8 +199,9 @@
                 <ul class="list-unstyled">
                     <li class="{% block ac_notice %}{% endblock ac_notice %}"> <a href="{% url 'home:notice' %}"> <i
                                 class="fas fa-chalkboard-teacher"></i></i>お知らせ管理</a></li>
-                    <li class="{% block ac_notification_all %}{% endblock ac_notification_all %}"> <a href="{% url 'home:notification_all' %}"> <i
-                                class="far fa-bell"></i></i>全員送信（通知Sys.）</a></li>
+                    <li class="{% block ac_notification_all %}{% endblock ac_notification_all %}"> <a
+                            href="{% url 'home:notification_all' %}"> <i class="far fa-bell"></i></i>全員送信（通知Sys.）</a>
+                    </li>
                 </ul>
                 {% endif %}
             </nav>
@@ -228,7 +231,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-6">
-                                <p>Zuya (Twitter: <a href="https://twitter.com/Zoniichan">@Zoniichan</a>) / 京都大学 11 月祭, 11 月祭事務局とは一切関係ありません</p>
+                                <p>Zuya (Twitter: <a href="https://twitter.com/Zoniichan">@Zoniichan</a>) / 京都大学 11 月祭,
+                                    11 月祭事務局とは一切関係ありません</p>
                             </div>
                             <div class="col-sm-6 text-right">
                                 <p>Design by <a href="https://bootstrapious.com/p/admin-template"

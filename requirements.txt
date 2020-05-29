@@ -7,6 +7,7 @@ celery==4.4.2
 certifi==2020.4.5.1
 chardet==3.0.4
 Django==3.0.6
+django-admin-sortable2==0.7.6
 django-appconf==1.0.4
 django-bootstrap-datepicker-plus==3.0.5
 django-bootstrap4==1.1.1

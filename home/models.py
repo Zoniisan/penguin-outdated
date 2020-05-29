@@ -193,6 +193,7 @@ class GroupInfo(models.Model):
     class Meta:
         verbose_name = '部局担当情報'
         verbose_name_plural = verbose_name
+        ordering = ('order',)
 
     def __str__(self):
         return self.group.name
@@ -213,6 +214,10 @@ class GroupInfo(models.Model):
     slack_ch = models.CharField(
         verbose_name='slack channel',
         max_length=100
+    )
+
+    order = models.PositiveIntegerField(
+        default=0
     )
 
 
@@ -307,6 +312,7 @@ class ContactKind(models.Model):
     class Meta:
         verbose_name = 'お問い合わせ種別'
         verbose_name_plural = verbose_name
+        ordering = ('order',)
 
     def __str__(self):
         return self.name
@@ -321,6 +327,10 @@ class ContactKind(models.Model):
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='管轄'
+    )
+
+    order = models.PositiveIntegerField(
+        default=0
     )
 
 

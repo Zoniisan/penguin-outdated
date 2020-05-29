@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}
+事務局員名簿
+{% endblock title %}
+
+{% block header %}
+事務局員名簿
+{% endblock header %}
+
+{% block ac_staff_list %}
+active
+{% endblock ac_staff_list %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">事務局員名簿</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        事務局員名簿
+    </div>
+    <div class="card-body">
+        <p>下記リンクから事務局員の連絡先をダウンロードできます。</p>
+        <hr>
+        <a class="btn btn-primary" href="{% url 'home:download_staff_vcards' 'all' %}" role="button"><i
+                class="fas fa-download"></i>&nbsp;全員</a>
+        <hr>
+        <a class="btn btn-info" href="{% url 'home:download_staff_vcards' 'b1' %}" role="button"><i
+                class="fas fa-download"></i>&nbsp;B1のみ</a>
+        <a class="btn btn-info" href="{% url 'home:download_staff_vcards' 'b2' %}" role="button"><i
+                class="fas fa-download"></i>&nbsp;B2のみ</a>
+        <a class="btn btn-info" href="{% url 'home:download_staff_vcards' 'b3' %}" role="button"><i
+                class="fas fa-download"></i>&nbsp;B3のみ</a>
+        <div class="table-responsive mt-4">
+            <table class="table text-nowrap">
+                <thead>
+                    <tr>
+                        <td>氏名</td>
+                        <td>よみがな</td>
+                        <td>メールアドレス</td>
+                        <td>電話番号</td>
+                        <td>学年</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr class="table-primary">
+                        <th>{{ object.group.name }}</th>
+                        <td>#{{ object.group.groupinfo.slack_ch }}</td>
+                        <td>{{ object.group.groupinfo.email }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% for user in object.member_list %}
+                    <tr>
+                        <td>{{ user.last_name }}{{ user.first_name }}</td>
+                        <td>{{ user.last_name_kana }}{{ user.first_name_kana }}</td>
+                        <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                        <td><a href="tel:{{ user.tel }}">{{ user.tel }}</a></td>
+                        <td>{{ user.grade }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock contents %}

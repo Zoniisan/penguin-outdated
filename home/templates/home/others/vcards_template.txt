@@ -1,0 +1,12 @@
+{% for user in user_list %}
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:{{ user.last_name }};{{ user.first_name }};;;
+FN;CHARSET=UTF-8:{{ user.last_name }} {{ user.first_name }}
+X-PHONETIC-FIRST-NAME;CHARSET=UTF-8:{{ user.first_name_kana }}
+X-PHONETIC-LAST-NAME;CHARSET=UTF-8:{{ user.last_name_kana }}
+ORG;CHARSET=UTF-8:{% for group in user.groups.all %}{{ group.name }}{% if forloop.last %} {% endif %}{% endfor %};
+EMAIL;type=INTERNET;type=HOME;type=pref:{{ user.email }}
+TEL;type=CELL;type=VOICE;type=pref:{{ user.tel }}
+END:VCARD
+{% endfor %}
