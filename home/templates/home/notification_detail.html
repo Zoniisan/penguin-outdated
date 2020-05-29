@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <th>担当</th>
-                    <td>{{ notification.office_group }}</td>
+                    <td>{{ notification.group }}</td>
                 </tr>
                 <tr>
                     <th>送信者</th>
@@ -50,7 +50,7 @@
     </div>
     <div class="card-footer">
         この件に関するお問い合わせは<a
-            href="mailto:{{ notification.office_group.email }}">{{ notification.office_group.email }}</a>にお送りください。
+            href="mailto:{{ notification.group.groupinfo.email }}">{{ notification.groupinfo.email }}</a>にお送りください。
     </div>
 </div>
 

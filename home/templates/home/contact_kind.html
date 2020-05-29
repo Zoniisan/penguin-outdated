@@ -44,16 +44,16 @@ active
                     {% endif %}
                     <td>{{ contact_kind.name }}</td>
                     <td>
-                        {% for office_group in contact_kind.office_groups.all %}
-                        {{ office_group.name }}
+                        {% for group in contact_kind.groups.all %}
+                        {{ group.name }}
                         {% if not forloop.last %}
                         <br>
                         {% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for office_group in contact_kind.office_groups.all %}
-                        #{{ office_group.slack_ch }}
+                        {% for group in contact_kind.groups.all %}
+                        #{{ group.groupinfo.slack_ch }}
                         {% if not forloop.last %}
                         <br>
                         {% endif %}

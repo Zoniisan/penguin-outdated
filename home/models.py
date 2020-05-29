@@ -184,25 +184,20 @@ class UserToken(models.Model):
     )
 
 
-class OfficeGroup(models.Model):
-    """ 事務局員の担当グループ
+class GroupInfo(models.Model):
+    """ 事務局員の部局担当情報
     """
 
     # settings
 
     class Meta:
-        verbose_name = '部局担当'
+        verbose_name = '部局担当情報'
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.group.name
 
     # fields
-
-    name = models.CharField(
-        verbose_name='名称',
-        max_length=50
-    )
 
     group = models.OneToOneField(
         'auth.Group',
@@ -323,8 +318,8 @@ class ContactKind(models.Model):
         max_length=100
     )
 
-    office_groups = models.ManyToManyField(
-        'home.OfficeGroup',
+    groups = models.ManyToManyField(
+        'auth.Group',
         verbose_name='管轄'
     )
 
@@ -376,11 +371,11 @@ class Notification(models.Model):
         related_name='notification_from'
     )
 
-    office_group = models.ForeignKey(
-        'home.OfficeGroup',
+    group = models.ForeignKey(
+        'auth.Group',
         verbose_name='担当',
         on_delete=models.CASCADE,
-        help_text='どの担当として送信するかをここで選択してください。'
+        help_text='どの担当として送信するかをここで選択してください。',
     )
 
     create_datetime = models.DateTimeField(

@@ -2,7 +2,7 @@
 {% load django_slack %}
 
 {% block channel %}
-#{{ office_group.slack_ch }}
+#{{ group.groupinfo.slack_ch }}
 {% endblock channel %}
 
 {% block text %}

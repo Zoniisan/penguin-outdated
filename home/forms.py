@@ -81,7 +81,7 @@ class NotificationForm(forms.ModelForm):
     class Meta:
         model = Notification
         fields = (
-            'to', 'title', 'body', 'office_group'
+            'to', 'title', 'body', 'group'
         )
         widgets = {
             "to": NotificationToWidget(

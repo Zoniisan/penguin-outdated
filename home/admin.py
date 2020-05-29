@@ -61,17 +61,27 @@ class UserTokenAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(models.OfficeGroup)
-class OfficeGroupAdmin(admin.ModelAdmin):
+@admin.register(models.GroupInfo)
+class GroupInfoAdmin(admin.ModelAdmin):
     """ [Admin] 部局担当
     """
+
+    def group_name(self, obj):
+        """対応する auth.Group の名前を取得
+
+        OneToOneField の参照先のフィールドは
+        このような関数を作って参照しなければならない。
+        """
+        return obj.group.name
+    group_name.short_description = '部局担当名'
+
     fieldsets = (
-        ('基本情報', {'fields': ('name', 'email', 'slack_ch')}),
+        ('基本情報', {'fields': ('email', 'slack_ch')}),
         ('auth.Group との関連', {'fields': ('group',)}),
     )
 
     list_display = (
-        'name', 'email', 'slack_ch', 'group'
+        'group_name', 'email', 'slack_ch', 'group'
     )
 
     search_fields = (
@@ -140,7 +150,7 @@ class ContactKindAdmin(admin.ModelAdmin):
     """ [Admin] お問い合わせ種別
     """
     fieldsets = (
-        (None, {'fields': ('name', 'office_groups')}),
+        (None, {'fields': ('name', 'groups')}),
     )
 
     list_display = (
@@ -152,7 +162,7 @@ class ContactKindAdmin(admin.ModelAdmin):
     )
 
     autocomplete_fields = (
-        'office_groups',
+        'groups',
     )
 
 
@@ -161,12 +171,12 @@ class NotificationAdmin(admin.ModelAdmin):
     """ [Admin] 通知
     """
     fieldsets = (
-        ('内容', {'fields': ('title', 'body', 'office_group')}),
+        ('内容', {'fields': ('title', 'body', 'group')}),
         ('送受信情報', {'fields': ('to', 'sender', 'create_datetime')}),
     )
 
     list_display = (
-        'title', 'sender', 'office_group', 'create_datetime'
+        'title', 'sender', 'group', 'create_datetime'
     )
 
     search_fields = (

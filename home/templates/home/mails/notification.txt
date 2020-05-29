@@ -4,10 +4,10 @@
 {{ user }} 様
 
 11 月祭事務局から通知があります。
-この件に関するお問い合わせは{{ object.office_group }}までお願いいたします。
+この件に関するお問い合わせは{{ object.group }}までお願いいたします。
 
-{{ object.office_group }} メールアドレス
-{{ object.office_group.email }}
+{{ object.group }} メールアドレス
+{{ object.group.groupinfo.email }}
 
 詳細はこちら
 {{ base_url }}{% url 'home:notification_detail' object.pk %}

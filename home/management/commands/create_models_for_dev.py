@@ -5,7 +5,7 @@
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from home.models import ContactKind, OfficeGroup, User
+from home.models import ContactKind, GroupInfo, User
 
 
 class Command(BaseCommand):
@@ -107,46 +107,46 @@ class Command(BaseCommand):
         g2.save()
         self.stdout.write(self.style.SUCCESS('Create(Group): "%s"' % g2))
 
-        # OfficeGroup
-        og1 = OfficeGroup.objects.create(
+        # GroupInfo
+        gi1 = GroupInfo.objects.create(
             name='システム担当',
             group=g1,
             email='system@example.com',
             slack_ch='system'
         )
-        og1.save()
+        gi1.save()
         self.stdout.write(
-            self.style.SUCCESS('Create(OfficeGroup): "%s"' % og1)
+            self.style.SUCCESS('Create(GroupInfo): "%s"' % gi1)
         )
-        og2 = OfficeGroup.objects.create(
+        gi2 = GroupInfo.objects.create(
             name='幹部',
             group=g2,
             email='knb@example.com',
             slack_ch='knb'
         )
-        og2.save()
+        gi2.save()
         self.stdout.write(
-            self.style.SUCCESS('Create(OfficeGroup): "%s"' % og2)
+            self.style.SUCCESS('Create(GroupInfo): "%s"' % gi2)
         )
 
         # ContactKind
         c1 = ContactKind.objects.create(
             name='11 月祭全般について'
         )
-        c1.office_groups.add(og1)
-        c1.office_groups.add(og2)
+        c1.groups.add(g1)
+        c1.groups.add(g2)
         c1.save()
         self.stdout.write(self.style.SUCCESS('Create(ContactKind): "%s"' % c1))
         c2 = ContactKind.objects.create(
             name='バグ報告'
         )
-        c2.office_groups.add(og1)
+        c2.groups.add(g1)
         c2.save()
         self.stdout.write(self.style.SUCCESS('Create(ContactKind): "%s"' % c2))
         c3 = ContactKind.objects.create(
             name='個人情報の変更依頼'
         )
-        c3.office_groups.add(og1)
+        c3.groups.add(g1)
         c3.save()
         self.stdout.write(self.style.SUCCESS('Create(ContactKind): "%s"' % c3))
 

@@ -253,9 +253,9 @@ class ContactView(LoginRequiredMixin, generic.CreateView):
         self.object = form.save()
 
         # お問い合わせの種類に応じた管轄部局に slack を送る
-        for office_group in form.instance.kind.office_groups.all():
+        for group in form.instance.kind.groups.all():
             context = {
-                'office_group': office_group,
+                'group': group,
             }
             attachments = [{
                 "fallback": "お問い合わせ内容",
@@ -327,8 +327,8 @@ def get_contact_kind_accesible_pk_list(self):
     """
 
     return self.request.user.groups.values_list(
-        'officegroup__contactkind', flat=True
-    )
+        'contactkind', flat=True
+    ).distinct()
 
 
 class ContactKindView(mixins.StaffOnlyMixin, generic.TemplateView):
@@ -476,7 +476,7 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
         context['mode'] = self.kwargs['mode']
 
         # 新規作成する場合は自分の担当のみ選択可能
-        context['form'].fields['office_group'].queryset = \
+        context['form'].fields['group'].queryset = \
             self.request.user.groups.all()
 
         if self.kwargs['mode'] == 'reply_to_contact':
@@ -506,8 +506,8 @@ def get_notification_accesible_pk_list(self):
     """
 
     return self.request.user.groups.values_list(
-        'officegroup__notification', flat=True
-    )
+        'notification', flat=True
+    ).distinct()
 
 
 class NotificationStaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
