@@ -190,8 +190,8 @@ SLACK_CHANNEL = '#penguin-errors'
 SLACK_USERNAME = 'penguin-bot'
 SLACK_AS_USER = True
 SLACK_FAIL_SILENTLY = False
-if DEBUG:
-    SLACK_BACKEND = 'django_slack.backends.ConsoleBackend'
+# DEBUG の値に関わらず slack を送信
+SLACK_BACKEND = 'django_slack.backends.UrllibBackend'
 
 LOGGING = {
     'version': 1,

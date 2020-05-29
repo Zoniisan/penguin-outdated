@@ -85,7 +85,7 @@ active
     </div>
     <div class="row mb-4">
         <div class="col">
-            {% if request.user.is_superuser %}
+            {% if request.user.is_staff %}
             <a class="btn btn-outline-success btn-block" href="{% url 'home:contact_kind' %}" role="button"><i
                     class="fas fa-envelope fa-3x"></i>
                 <hr>お問い合わせ管理</a>
