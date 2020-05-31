@@ -1076,6 +1076,7 @@ class CsvStaffRegisterSuccessView(mixins.AdminOnlyMixin, generic.FormView):
         for _, value in staff_register_dict.items():
             user = value['user']
             user.is_staff = True
+            user.groups.clear()
             user.groups.add(*value['group_list'])
             user.save()
 
