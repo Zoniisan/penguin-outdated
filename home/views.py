@@ -1015,3 +1015,166 @@ def csv_contact_kind_download(request):
     )
 
     return response
+
+
+class CsvStaffRegisterView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] Staff User を作成
+
+    フォーム画面
+    """
+
+    template_name = 'home/csv_staff_register.html'
+    form_class = forms.CsvForm
+
+
+class CsvStaffRegisterConfirmView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] Staff User を作成
+
+    確認画面
+    """
+
+    form_class = forms.CsvForm
+
+    def form_valid(self, form):
+        csvfile = form.cleaned_data['csvfile']
+
+        # 情報を取得
+        valid_user_dict, invalid_user_list \
+            = csv_staff_register_to_dict(csvfile)
+
+        return render(
+            self.request, 'home/csv_staff_register_confirm.html', {
+                'form': form,
+                'valid_user_dict': valid_user_dict,
+                'invalid_user_list': invalid_user_list
+            }
+        )
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'アップロードしたファイルに不備があります')
+        return redirect('home:csv_contact_kind')
+
+
+class CsvStaffRegisterSuccessView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] StaffRegister を作成
+
+    完了画面
+    """
+
+    form_class = forms.CsvForm
+
+    def form_valid(self, form):
+        csvfile = form.cleaned_data['csvfile']
+
+        # 情報を取得
+        staff_register_dict, _ = csv_staff_register_to_dict(csvfile)
+
+        # 今回作成した StaffRegister の pk を保管する
+        created_staff_register_pk_list = []
+
+        # valid_group_dict の内容に基づいてモデルを作成する
+        for _, value in staff_register_dict.items():
+            user = value['user']
+            user.is_staff = True
+            user.groups.add(*value['group_list'])
+            user.save()
+
+            # 作成したリストに pk を保管
+            created_staff_register_pk_list.append(user.pk)
+
+        return render(
+            self.request, 'home/csv_staff_register_success.html', {
+                'object_list': [
+                    {
+                        'group': group,
+                        'member_list': group.user_set.all().order_by(
+                            '-grade', 'last_name_kana', 'first_name_kana'
+                        )
+                    }
+                    for group in Group.objects.all().order_by(
+                        'groupinfo__order'
+                    )
+                ],
+                'created_staff_register_pk_list':
+                    created_staff_register_pk_list
+            }
+        )
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'アップロードしたファイルに不備があります')
+        return redirect('home:csv_contact_kind')
+
+
+def csv_staff_register_to_dict(csvfile):
+    """[CSV] contact_kind.csv から list を作成する
+
+    Args:
+        csvFile(file): CSV ファイル
+
+    Returns:
+        dict: 有効
+        list: 無効（該当ユーザーなし）
+    """
+    # reader オブジェクトを作成
+    csvtext = io.TextIOWrapper(csvfile)
+    reader = csv.reader(csvtext)
+
+    # header 行を pass
+    next(reader)
+
+    # User が存在するかどうかで振り分け
+    valid_username_dict = {}
+    invalid_username_list = []
+
+    # 1 行ずつデータを取り出し
+    for row in reader:
+        username = row[0]
+        if User.objects.filter(username=username).exists():
+            group_list = [
+                Group.objects.get(groupinfo__order=i)
+                for i, data in enumerate(row) if data == '1'
+            ]
+            valid_username_dict[username] = {
+                'user': User.objects.get(username=username),
+                'group_list': group_list
+            }
+        else:
+            invalid_username_list.append(username)
+
+    return valid_username_dict, invalid_username_list
+
+
+def csv_staff_register_download(request):
+    """[CSV] StaffRegister を作成
+
+    テンプレート CSV ファイルダウンロード
+    """
+
+    # アクセスはシステム管理者のみ
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    # ファイルはサーバーに残さない（危なっかしいので）
+    response = HttpResponse(content_type='text/csv')
+
+    response['Content-Disposition'] = \
+        'attachment; filename="staff_register.csv"'
+
+    # CSV 書き出し
+    writer = csv.writer(response)
+
+    # 部局担当リスト（管轄する部局の欄に 1 を入力する）
+    group_list = list(
+        Group.objects.all().order_by(
+            'groupinfo'
+        ).values_list(
+            'name', flat=True
+        )
+    )
+
+    # データ書き出し
+    writer.writerow(
+        ['User.username（例：1029290000）'] + group_list
+    )
+
+    return response

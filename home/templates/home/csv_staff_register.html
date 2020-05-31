@@ -3,11 +3,11 @@
 {% load bootstrap4 %}
 
 {% block title %}
-[CSV] Group, GroupInfo 作成
+[CSV] Staff 権限付与
 {% endblock title %}
 
 {% block header %}
-[CSV] Group, GroupInfo 作成
+[CSV] Staff 権限付与
 {% endblock header %}
 
 {% block ac_csv %}
@@ -18,33 +18,34 @@ active
 {% block contents %}
 <nav class="breadcrumb mb-2 px-3">
     <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
-    <span class="breadcrumb-item active">[CSV] Group, GroupInfo 作成</span>
+    <span class="breadcrumb-item active">[CSV] Staff 権限付与</span>
 </nav>
 
 <div class="card">
-    <form action="{% url 'home:csv_group_confirm' %}" method="post" class="form" enctype="multipart/form-data">
+    <form action="{% url 'home:csv_staff_register_confirm' %}" method="post" class="form" enctype="multipart/form-data">
         <div class="card-header">
-            [CSV] Group, GroupInfo 作成
+            [CSV] Staff 権限付与
         </div>
         <div class="card-body">
             <h2>説明</h2>
-            <p>CSV ファイルを読み込み、Group（部局担当）と GroupInfo（部局担当情報）を追加します。</p>
+            <p>CSV ファイルを読み込み、Staff 権限付与</p>
             <hr>
             <h2>1. ダウンロード</h2>
             <p>まずは下のボタンからテンプレートとなる csv ファイルをダウンロードしてください。</p>
             <div class="alert alert-warning" role="alert">
                 <p class="mb-0">UTF-8 でダウンロードします。Windows+MS Office Excel で開く場合は工夫が必要です。</p>
             </div>
-            <a class="btn btn-primary" href="{% url 'home:csv_group_download' %}" role="button"><i
+            <a class="btn btn-primary" href="{% url 'home:csv_staff_register_download' %}" role="button"><i
                     class="fas fa-download"></i> CSV ダウンロード</a>
             <hr>
             <h2>2. アップロード</h2>
             <p>次に、ダウンロードした CSV ファイルに必要事項を入力して、下のフォームにアップロードしてください。</p>
+            <p>各ユーザーについて、<span class="text-danger">所属させたい部局担当の欄に 1 を入力</span>してください。</p>
             <div class="alert alert-warning" role="alert">
                 <p class="mb-0">UTF-8 で保存しアップロードしてください。</p>
             </div>
             <div class="alert alert-warning" role="alert">
-                <p class="mb-0">1. でダウンロードした「<b>group.csv</b>」を編集したファイルをアップロードしてください。</p>
+                <p class="mb-0">1. でダウンロードした「<b>staff_register.csv</b>」を編集したファイルをアップロードしてください。</p>
             </div>
             {% csrf_token %}
             {% bootstrap_form form %}

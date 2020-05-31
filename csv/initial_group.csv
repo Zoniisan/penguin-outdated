@@ -1,3 +1,4 @@
+Group.name（例：総合対応局 システム担当）,GroupInfo.email（例：system@example.com）,GroupInfo.slack_ch（例：st-system）
 幹部,knb@penguin-test.com,knb
 本部構内対応局,hombu@penguin-test.com,hombu
 おまつり広場局 ステージ担当,stage@penguin-test.com,oma-stage
