@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+[CSV] ContactKind 作成
+{% endblock title %}
+
+{% block header %}
+[CSV] ContactKind 作成
+{% endblock header %}
+
+{% block ac_csv %}
+active
+{% endblock ac_csv %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:csv_group' %}">[CSV] ContactKind 作成</a>
+    <span class="breadcrumb-item active">確認</span>
+    <span class="breadcrumb-item active">完了</span>
+</nav>
+
+<div class="card">
+    <form action="{% url 'home:csv_group_success' %}" method="post" class="form" enctype="multipart/form-data">
+        <div class="card-header">
+            [CSV] ContactKind 作成 完了画面
+        </div>
+        <div class="card-body">
+            <h2>4. 完了</h2>
+            <p>
+                下記の通り ContactKind が登録されました。
+                <span class="text-success">緑色の行</span>は今回新規作成されたデータです。
+            </p>
+            <div class="alert alert-success" role="alert">
+                <p class="mb-0">並び替えは<a href="/admin/home/groupinfo/">管理サイト</a>から実行できます。</p>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ContactKind.name</th>
+                        <th>管轄</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact_kind in contact_kind_list %}
+                    <tr{% if contact_kind.pk in created_contact_kind_pk_list %} class="table-success" {% endif %}>
+                        <td>{{ contact_kind.name }}</td>
+                        <td>
+                            {% for group in contact_kind.groups.all %}
+                            {{ group }}&nbsp;
+                            {% endfor %}
+                        </td>
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-secondary btn-block" href="{% url 'home:index' %}" role="button">ホーム画面へ</a>
+        </div>
+    </form>
+</div>
+{% endblock contents %}

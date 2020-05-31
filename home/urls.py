@@ -113,4 +113,24 @@ urlpatterns = [
         views.csv_group_download,
         name='csv_group_download'
     ),
+    path(
+        'csv_contact_kind',
+        views.CsvContactKindView.as_view(),
+        name='csv_contact_kind'
+    ),
+    path(
+        'csv_contact_kind_confirm',
+        views.CsvContactKindConfirmView.as_view(),
+        name='csv_contact_kind_confirm'
+    ),
+    path(
+        'csv_contact_kind_success',
+        views.CsvContactKindSuccessView.as_view(),
+        name='csv_contact_kind_success'
+    ),
+    path(
+        'csv_contact_kind_download',
+        views.csv_contact_kind_download,
+        name='csv_contact_kind_download'
+    ),
 ]

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+[CSV] ContactKind作成
+{% endblock title %}
+
+{% block header %}
+[CSV] ContactKind 作成
+{% endblock header %}
+
+{% block ac_csv %}
+active
+{% endblock ac_csv %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:csv_contact_kind' %}">[CSV] ContactKind 作成</a>
+    <span class="breadcrumb-item active">確認</span>
+</nav>
+
+<div class="card">
+    <form action="{% url 'home:csv_contact_kind_confirm' %}" method="post" class="form" enctype="multipart/form-data">
+        <div class="card-header">
+            [CSV] ContactKind 作成 確認画面
+        </div>
+        <div class="card-body">
+            <h2>3. 確認</h2>
+            <p>下記の通り ContactKind が登録されます。問題なければ「登録」を押してください。</p>
+            <div class="alert alert-warning" role="alert">
+                <ul class="mb-0">
+                    <li>文字化けした場合は文字コードが UTF-8 になっているか確認してください。</li>
+                </ul>
+            </div>
+            <h3>登録するデータ</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ContactKind.name</th>
+                        <td>管轄</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact_kind_name, group_list in contact_kind_dict.items %}
+                    <tr>
+                        <td>{{ contact_kind_name }}</td>
+                        <td>
+                            {% for group in group_list %}
+                            {{ group }}&nbsp;
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="alert alert-warning" role="alert">
+                お手数ですがもう一度ファイルを選択し直してください。
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-danger btn-block"
+                formaction="{% url 'home:csv_contact_kind_success' %}">
+                登録
+            </button>
+            <button type="submit" class="btn btn-primary btn-block"
+                formaction="{% url 'home:csv_contact_kind_confirm' %}">
+                再確認
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}

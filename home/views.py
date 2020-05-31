@@ -12,7 +12,6 @@ from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core import mail
 from django.core.exceptions import PermissionDenied
-from django.core.files.storage import default_storage
 from django.core.mail import send_mail
 from django.db.models import Max
 from django.http import HttpResponse
@@ -728,7 +727,7 @@ class CsvGroupConfirmView(mixins.AdminOnlyMixin, generic.FormView):
         csvfile = form.cleaned_data['csvfile']
 
         # 登録できる情報とできない情報に振り分ける
-        valid_group_dict, invalid_group_dict = csv_group_to_list(csvfile)
+        valid_group_dict, invalid_group_dict = csv_group_to_dict(csvfile)
 
         return render(
             self.request, 'home/csv_group_confirm.html', {
@@ -755,7 +754,7 @@ class CsvGroupSuccessView(mixins.AdminOnlyMixin, generic.FormView):
         csvfile = form.cleaned_data['csvfile']
 
         # invalid_group_list は不要なので捨てる
-        valid_group_dict, _ = csv_group_to_list(csvfile)
+        valid_group_dict, _ = csv_group_to_dict(csvfile)
 
         # 今回作成した Group の pk を保管する
         created_group_pk_list = []
@@ -794,7 +793,7 @@ class CsvGroupSuccessView(mixins.AdminOnlyMixin, generic.FormView):
         return redirect('home:csv_group')
 
 
-def csv_group_to_list(csvfile):
+def csv_group_to_dict(csvfile):
     """[CSV] group.csv から list を作成する
 
     Args:
@@ -860,5 +859,159 @@ def csv_group_download(request):
         'GroupInfo.email（例：system@example.com）',
         'GroupInfo.slack_ch（例：st-system）'
     ])
+
+    return response
+
+
+class CsvContactKindView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] ContactKind を作成
+
+    フォーム画面
+    """
+
+    template_name = 'home/csv_contact_kind.html'
+    form_class = forms.CsvForm
+
+
+class CsvContactKindConfirmView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] ContactKind を作成
+
+    確認画面
+    """
+
+    form_class = forms.CsvForm
+
+    def form_valid(self, form):
+        csvfile = form.cleaned_data['csvfile']
+
+        # 情報を取得
+        contact_kind_dict = csv_contact_kind_to_dict(csvfile)
+
+        return render(
+            self.request, 'home/csv_contact_kind_confirm.html', {
+                'form': form,
+                'contact_kind_dict': contact_kind_dict
+            }
+        )
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'アップロードしたファイルに不備があります')
+        return redirect('home:csv_contact_kind')
+
+
+class CsvContactKindSuccessView(mixins.AdminOnlyMixin, generic.FormView):
+    """[CSV] ContactKind を作成
+
+    完了画面
+    """
+
+    form_class = forms.CsvForm
+
+    def form_valid(self, form):
+        csvfile = form.cleaned_data['csvfile']
+
+        # 情報を取得
+        contact_kind_dict = csv_contact_kind_to_dict(csvfile)
+
+        # 今回作成した ContactKind の pk を保管する
+        created_contact_kind_pk_list = []
+
+        # valid_group_dict の内容に基づいてモデルを作成する
+        for contact_kind_name, group_list in contact_kind_dict.items():
+            # Save!
+            contact_kind = ContactKind.objects.create(name=contact_kind_name)
+            contact_kind.groups.add(*group_list)
+            contact_kind.save()
+
+            # 作成したリストに pk を保管
+            created_contact_kind_pk_list.append(contact_kind.pk)
+
+        # order = 0 (default) をもつ GroupInfo に対して order を割り当てる
+        # ※order は admin サイトなどで表示される順序
+        max_order = \
+            ContactKind.objects.all().aggregate(Max('order'))['order__max']
+        counter = 1
+        for unordered_contact_kind_info in ContactKind.objects.filter(order=0):
+            unordered_contact_kind_info.order = max_order + counter
+            unordered_contact_kind_info.save()
+            counter = counter + 1
+
+        return render(
+            self.request, 'home/csv_contact_kind_success.html', {
+                'contact_kind_list': ContactKind.objects.all(),
+                'created_contact_kind_pk_list': created_contact_kind_pk_list
+            }
+        )
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'アップロードしたファイルに不備があります')
+        return redirect('home:csv_contact_kind')
+
+
+def csv_contact_kind_to_dict(csvfile):
+    """[CSV] contact_kind.csv から list を作成する
+
+    Args:
+        csvFile(file): CSV ファイル
+
+    Returns:
+        dict: ContactKind についての情報
+    """
+    # reader オブジェクトを作成
+    csvtext = io.TextIOWrapper(csvfile)
+    reader = csv.reader(csvtext)
+
+    # 初期化
+    contact_kind_dict = {}
+
+    # header 行を pass
+    next(reader)
+
+    # 1 行ずつデータを取り出し
+    for row in reader:
+        contact_name = row[0]
+        group_list = [
+            Group.objects.get(groupinfo__order=i)
+            for i, data in enumerate(row) if data == '1'
+        ]
+
+        # 管轄となる Group を取得
+        contact_kind_dict[contact_name] = group_list
+
+    return contact_kind_dict
+
+
+def csv_contact_kind_download(request):
+    """[CSV] ContactKind を作成
+
+    テンプレート CSV ファイルダウンロード
+    """
+
+    # アクセスはシステム管理者のみ
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    # ファイルはサーバーに残さない（危なっかしいので）
+    response = HttpResponse(content_type='text/csv')
+
+    response['Content-Disposition'] = \
+        'attachment; filename="contact_kind.csv"'
+
+    # CSV 書き出し
+    writer = csv.writer(response)
+
+    # 部局担当リスト（管轄する部局の欄に 1 を入力する）
+    group_list = list(
+        Group.objects.all().order_by(
+            'groupinfo'
+        ).values_list(
+            'name', flat=True
+        )
+    )
+
+    # データ書き出し
+    writer.writerow(
+        ['ContactKind.name（例：11 月祭全般についてのお問い合わせ）'] + group_list
+    )
 
     return response
