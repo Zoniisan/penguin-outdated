@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+[CSV] Group, GroupInfo 作成
+{% endblock title %}
+
+{% block header %}
+[CSV] Group, GroupInfo 作成
+{% endblock header %}
+
+{% block ac_csv %}
+active
+{% endblock ac_csv %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'home:csv_group' %}">[CSV] Group, GroupInfo 作成</a>
+    <span class="breadcrumb-item active">確認</span>
+</nav>
+
+<div class="card">
+    <form action="" method="post" class="form" enctype="multipart/form-data">
+        <div class="card-header">
+            [CSV] Group, GroupInfo 作成 確認画面
+        </div>
+        <div class="card-body">
+            <h2>3. 確認</h2>
+            <p>下記の通り Group, GroupInfo が登録されます。問題なければ「登録」を押してください。</p>
+            <div class="alert alert-warning" role="alert">
+                <ul class="mb-0">
+                    <li>文字化けした場合は文字コードが UTF-8 になっているか確認してください。</li>
+                    <li>CSV ファイル内に同じ Group.name を持つ行が複数含まれている場合は、最後の行のデータのみが保持されます。</li>
+                </ul>
+            </div>
+            <h3>登録するデータ</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Group.name</th>
+                        <th>GroupInfo.email</th>
+                        <th>GroupInfo.slack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group_name, information in valid_group_dict.items %}
+                    <tr>
+                        <td>{{ group_name }}</td>
+                        <td>{{ information.email }}</td>
+                        <td>{{ information.slack_ch }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3 class="text-danger">以下のデータはすでに同名の Group が存在するので登録できません</h3>
+            <p>Group 名の変更は<a href="/admin/auth/group/">管理サイト</a>から行ってください。</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Group.name</th>
+                        <th>GroupInfo.email</th>
+                        <th>GroupInfo.slack</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group_name, information in invalid_group_dict.items %}
+                    <tr>
+                        <td class="text-danger">{{ group_name }}</td>
+                        <td>{{ information.email }}</td>
+                        <td>{{ information.slack_ch }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="alert alert-warning" role="alert">
+                お手数ですがもう一度ファイルを選択し直してください。
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-danger btn-block" formaction="{% url 'home:csv_group_success' %}">
+                登録
+            </button>
+            <button type="submit" class="btn btn-primary btn-block" formaction="{% url 'home:csv_group_confirm' %}">
+                再確認
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+{% endblock contents %}

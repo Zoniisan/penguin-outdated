@@ -202,12 +202,12 @@
                     <li class="{% block ac_notification_all %}{% endblock ac_notification_all %}"> <a
                             href="{% url 'home:notification_all' %}"> <i class="far fa-bell"></i></i>全員送信（通知Sys.）</a>
                     </li>
-                    <li><a href="#csvRegister" aria-expanded="false" data-toggle="collapse"> <i
+                    <li class="{% block ac_csv %}{% endblock ac_csv %}"><a href="#csvRegister" aria-expanded="false" data-toggle="collapse"> <i
                                 class="icon-interface-windows"></i>CSV 処理 </a>
                         <ul id="csvRegister" class="collapse list-unstyled ">
-                            <li><a href="{% url 'home:csv_register' 'group' %}">Group, GroupInfo</a></li>
-                            <li><a href="{% url 'home:csv_register' 'contact_kind' %}">ContactKind</a></li>
-                            <li><a href="{% url 'home:csv_register' 'staff' %}">Staff登録</a></li>
+                            <li><a href="{% url 'home:csv_group' %}">Group, GroupInfo</a></li>
+                            <li><a href="{% url 'home:csv_group' %}">ContactKind</a></li>
+                            <li><a href="{% url 'home:csv_group' %}">Staff登録</a></li>
                         </ul>
                     </li>
                 </ul>

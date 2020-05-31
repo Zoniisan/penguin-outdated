@@ -93,7 +93,7 @@ class NotificationForm(forms.ModelForm):
         }
 
 
-class CsvRegisterForm(forms.Form):
+class CsvForm(forms.Form):
     """CSV データ登録用のフォーム
     """
     csvfile = forms.FileField(

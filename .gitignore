@@ -6,3 +6,4 @@ __pycache__
 .env.web
 .env.web.prod
 docker-compose.prod.yml
+media

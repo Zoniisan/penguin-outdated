@@ -213,8 +213,7 @@ class GroupInfo(models.Model):
 
     slack_ch = models.CharField(
         verbose_name='slack channel',
-        max_length=100,
-        unique=True
+        max_length=100
     )
 
     order = models.PositiveIntegerField(

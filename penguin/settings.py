@@ -190,7 +190,7 @@ SLACK_TOKEN = os.environ.get('SLACK_TOKEN', None)
 SLACK_CHANNEL = '#penguin-errors'
 SLACK_USERNAME = 'penguin-bot'
 SLACK_AS_USER = True
-SLACK_FAIL_SILENTLY = False
+SLACK_FAIL_SILENTLY = True
 # DEBUG の値に関わらず slack を送信
 SLACK_BACKEND = 'django_slack.backends.UrllibBackend'
 
@@ -229,3 +229,8 @@ CACHES = {
         }
     },
 }
+
+
+# Media settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
