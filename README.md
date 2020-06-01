@@ -8,7 +8,7 @@
     * メールは実際には送信されません。slack は検証用の slack workspace に
     実際に届きます。参加したい方はご連絡ください。
 * Wiki を立てました！！詳しい情報はこちらでご参照ください！
-    * https://wiki.zoniichan.com/penguin
+    * https://wiki.zoniichan.com/penguin/
 
 ## Prerequirements
 * docker-compose
@@ -18,7 +18,7 @@
 1. **環境変数ファイルを作成する必要があります**。
     * `./envfile.sh` を実行してください。
     * 何も変更しなくても大丈夫ですが、slack を実際に送りたい場合は
-    `env.web` の `SLACK_TOKEN` の値を変更してください。
+    `.env.web` の `SLACK_TOKEN` の値を変更してください。
 
 1. `docker-compose up -f docker-compose.local.yml`
     * ビルドからやり直す場合は `--build` を付加してください
@@ -36,8 +36,6 @@
 * プロフィール確認
 * 一般京大生→事務局員への「お問い合わせ」
 * 事務局員→一般京大生への「通知」
-    * ただし現時点ではメールの送信が非同期処理になっていないため、
-    大量同時送信については実用性がありません。
 * 管理サイト
 * ページトップに表示される「お知らせ」の管理
 
