@@ -5,26 +5,30 @@
 
 * デプロイしました！！ master ブランチの内容を手動で push します。
     * https://penguin.zoniichan.com
+    * メールは実際には送信されません。slack は検証用の slack workspace に
+    実際に届きます。参加したい方はご連絡ください。
 * Wiki を立てました！！詳しい情報はこちらでご参照ください！
     * https://wiki.zoniichan.com/penguin
 
 ## Prerequirements
 * docker-compose
-* python3 (環境変数ファイルを作成するのに使います)
 
 ## How to install and run
 1. `git clone git@github.com:Zoniisan/penguin.git`
 1. **環境変数ファイルを作成する必要があります**。
-    * `python3 create_env_file.py` を実行すればいい感じに作ってくれます。
-    * 本番環境でなければ何も考えずに Enter を連打すればいいはずです。
-    * `DEBUG=True` の場合はメールと slack で送信されるべき情報が標準出力に
-    流れるので、メールや slack に関する設定は適当で大丈夫です。
-1. `docker-compose up`
+    * `./envfile.sh` を実行してください。
+    * 何も変更しなくても大丈夫ですが、slack を実際に送りたい場合は
+    `env.web` の `SLACK_TOKEN` の値を変更してください。
+
+1. `docker-compose up -f docker-compose.local.yml`
+    * ビルドからやり直す場合は `--build` を付加してください
+    * デタッチモードで起動する場合は `-d` を付加してください
+1. `127.0.0.1:8000` にアクセスすれば PENGUIN が起動します
 
 
 ## Post-install
 * 開発環境を整えたい方など、詳しい情報を知りたい方は、wiki をご覧ください。
-* wiki.zoniichan.com/penguin/
+    * https://wiki.zoniichan.com/penguin/
 
 
 ## Current Situation

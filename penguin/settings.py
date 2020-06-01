@@ -166,15 +166,16 @@ DATE_FORMAT = 'Y/m/d'
 
 # Email settings
 # 迷惑メールの送信を防ぐため、メールは原則コンソール表示とする
-EMAIL_BACKEND = os.environ.get(
-    'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend'
-)
+if os.environ.get('EMAIL_SMTP', None) == '1':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 587)
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hoge@hoge.com')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', True)
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', None) == '1'
 
 
 # Url settings
