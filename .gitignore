@@ -1,10 +1,20 @@
+# vscode conf file
 .vscode
+
+# pyc file
 __pycache__
+
+# penguin/static, media files
 /static
-.env.db
-.env.db.prod
-.env.web
-.env.web.prod
-.env.celery
-docker-compose.prod.yml
 media
+
+# environment variable files
+# for production
+.env.celery
+.env.db
+.env.web
+
+# for local
+.env.celery.local
+.env.db.local
+.env.web.local
