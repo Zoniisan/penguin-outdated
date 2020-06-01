@@ -28,6 +28,17 @@ services:
       - db
       - redis
 
+  celery:
+    build: .
+    command: celery -A penguin worker -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - db
+      - redis
+    env_file: .env.celery
+
 volumes:
   postgres_data:
   redis_data:

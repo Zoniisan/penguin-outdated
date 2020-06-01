@@ -27,7 +27,7 @@ active
             プロフィールの変更は原則できません。ただし、結婚による改姓や情報誤入力など、
             やむを得ない事情がある場合は<a href="{% url 'home:contact' %}">こちら</a>から 11 月祭事務局にお問い合わせください。
         </div>
-        <p>あなたが参加する企画の他の参加者には <b>{{ request.user.get_display_name }}</b> と表示されます。</p>
+        <p>あなたが参加する企画の他の参加者には <b>{{ request.user }}</b> と表示されます。</p>
 
         <h2>個人情報</h2>
         <table class="table table-striped">

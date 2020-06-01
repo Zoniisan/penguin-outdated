@@ -49,7 +49,8 @@ INSTALLED_APPS += [
     'bootstrap4',
     'bootstrap_datepicker_plus',
     'django_slack',
-    'django_select2'
+    'django_select2',
+    'django_celery_results',
 ]
 
 # penguin
@@ -234,3 +235,9 @@ CACHES = {
 # Media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# Celery Settings
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_CACHE_BACKEND = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'django-db'

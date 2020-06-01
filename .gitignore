@@ -5,5 +5,6 @@ __pycache__
 .env.db.prod
 .env.web
 .env.web.prod
+.env.celery
 docker-compose.prod.yml
 media

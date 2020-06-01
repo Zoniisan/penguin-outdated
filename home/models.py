@@ -14,7 +14,7 @@ class User(AbstractUser):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.get_full_name() + ' (' + self.username + ')'
+        return self.get_display_name()
 
     # functions
 
@@ -24,10 +24,15 @@ class User(AbstractUser):
         return "".join([self.last_name, self.first_name])
 
     def get_display_name(self):
-        """表示名を返す
+        """学部＋回生＋氏名を返す
         """
         return '(' + self.faculty + '/' + self.grade + ') ' \
             + self.get_full_name()
+
+    def get_username_and_name(self):
+        """氏名＋学生番号を返す
+        """
+        return self.get_full_name() + ' (' + self.username + ')'
 
     # validators
 

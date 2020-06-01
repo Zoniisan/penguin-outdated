@@ -1,0 +1,14 @@
+{% extends 'mails/base.txt' %}
+
+{% block contents %}
+{{ user }} 様
+
+PENGUIN アカウントを作成しました！
+
+もし PENGUIN にアクセスした覚えがない場合は、
+システム管理者にご連絡ください。
+
+PENGUIN
+{{ base_url }}
+
+{% endblock contents %}

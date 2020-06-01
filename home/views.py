@@ -10,9 +10,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
-from django.core import mail
+from home.tasks import send_mail_async
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
 from django.db.models import Max
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -67,10 +66,14 @@ class SignUpTokenView(generic.CreateView):
                 ))
             ]),
         }
-        message = render_to_string('home/mails/signup_token.txt', context)
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [form.cleaned_data['email']]
-        send_mail(subject, message, from_email, recipient_list)
+        body = render_to_string('home/mails/signup_token.txt', context)
+        to_list = [form.cleaned_data['email']]
+
+        send_mail_async.delay(
+            subject,
+            body,
+            to_list
+        )
 
         return super().form_valid(form)
 
@@ -134,6 +137,24 @@ class SignUpView(generic.CreateView):
         # トークン無効化
         user_token.used = True
         user_token.save()
+
+        # save
+        self.object = form.save()
+
+        # email を送信
+        subject = 'PENGUIN アカウント本登録完了'
+        context = {
+            'base_url': settings.BASE_URL,
+            'user': self.object
+        }
+        body = render_to_string('home/mails/signup_finish.txt', context)
+        to_list = [self.object.email]
+
+        send_mail_async.delay(
+            subject,
+            body,
+            to_list
+        )
 
         return super().form_valid(form)
 
@@ -309,12 +330,16 @@ class ContactView(LoginRequiredMixin, generic.CreateView):
         context = {
             'contact': form.instance,
         }
-        from_email = settings.EMAIL_HOST_USER
-        message = render_to_string(
+        body = render_to_string(
             'home/mails/contact_received.txt', context
         )
-        recipient_list = [form.instance.writer.email]
-        send_mail(subject, message, from_email, recipient_list)
+        to_list = [form.instance.writer.email]
+
+        send_mail_async.delay(
+            subject,
+            body,
+            to_list
+        )
 
         # message 発出
         messages.success(
@@ -444,28 +469,25 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
         # 宛先にメールを送信する
         subject = '通知: %s' % form.instance.title
 
-        from_email = settings.EMAIL_HOST_USER
-
         context = {
-            'object': self.object,
+            'notification': self.object,
             'base_url': settings.BASE_URL,
         }
 
-        # 同一コネクションで 1 人 1 件ずつ送信
-        # Todo: 非同期送信の実装
-        with mail.get_connection() as connection:
-            for user in self.object.to.all():
-                context['user'] = user
-                message = render_to_string(
-                    'home/mails/notification.txt', context
-                )
-                mail.EmailMessage(
-                    subject,
-                    message,
-                    from_email,
-                    [user.email],
-                    connection=connection
-                ).send()
+        for user in self.object.to.all():
+            # body を描画
+            context['user'] = user
+            body = render_to_string(
+                'home/mails/notification.txt', context
+            )
+
+            # メールを送信
+            send_mail_async.delay(
+                subject,
+                body,
+                [user.email],
+                reply_to=[self.object.group.groupinfo.email]
+            )
 
         # message 発出
         messages.success(

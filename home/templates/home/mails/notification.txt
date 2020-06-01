@@ -4,23 +4,23 @@
 {{ user }} 様
 
 11 月祭事務局から通知があります。
-この件に関するお問い合わせは{{ object.group }}までお願いいたします。
+この件に関するお問い合わせは{{ notification.group }}までお願いいたします。
 
-{{ object.group }} メールアドレス
-{{ object.group.groupinfo.email }}
+{{ notification.group }} メールアドレス
+（「返信」ボタンを押すと自動的にこの宛先が設定されます）
+{{ notification.group.groupinfo.email }}
 
 詳細はこちら
-{{ base_url }}{% url 'home:notification_detail' object.pk %}
+{{ base_url }}{% url 'home:notification_detail' notification.pk %}
 
 -----------------------
 
 送信者
-{{ object.sender }}
-
+{{ notification.sender }}
 件名
-{{ object.title }}
+{{ notification.title }}
 
 本文
-{{ object.body }}
+{{ notification.body }}
 
 {% endblock contents %}
