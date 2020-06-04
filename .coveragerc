@@ -1,0 +1,9 @@
+[run]
+source = .
+omit =
+    */migrations/*
+    */tests/*
+    manage.py
+    penguin/asgi.py
+    penguin/settings.py
+    penguin/wsgi.py

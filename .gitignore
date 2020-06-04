@@ -18,3 +18,7 @@ media
 .env.celery.local
 .env.db.local
 .env.web.local
+
+# coverage
+.coverage
+htmlcov
