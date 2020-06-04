@@ -4,3 +4,4 @@ exclude_patterns:
 - "general_static/"
 - "**/media/"
 - "**/migrations/"
+- "**/tests/"
