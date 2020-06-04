@@ -32,7 +32,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "9e:5d:b6:e3:17:31:37:f9:07:5c:b3:1c:90:16:72:15"
-      - run: ssh ${USER_NAME}@${HOST_NAME} 'cd penguin && deploy'
+      - run: ssh ${USER_NAME}@${HOST_NAME} 'cd penguin && git pull origin master && docker-compose up --build -d'
 
 # テストが成功した場合のみ、deployを実行するようにします。
 workflows:
