@@ -21,4 +21,5 @@ media
 
 # coverage
 .coverage
+coverage.xml
 htmlcov
