@@ -1,9 +1,15 @@
 # PENGUIN
+[![django](https://img.shields.io/badge/django-3.0.6-214c33.svg?style=flat)](https://djangoproject.com/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![CircleCI](https://circleci.com/gh/Zoniisan/penguin.svg?style=shield)](https://circleci.com/gh/Zoniisan/penguin)
+[![Maintainability](https://api.codeclimate.com/v1/badges/47f3158caa24c86ea009/maintainability)](https://codeclimate.com/github/Zoniisan/penguin/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/47f3158caa24c86ea009/test_coverage)](https://codeclimate.com/github/Zoniisan/penguin/test_coverage)
+
 この Web アプリケーションは、11 月祭に関する事務手続きを補助します。
 ……っていうアプリを 2 年前に開発した人です。
 事務局をやめたので何の権限もありませんが、勉強も兼ねてちゃんと作り直します。
 
-* デプロイしました！！ master ブランチの内容を手動で push します。
+* デプロイしました！！ master に push した時点で変更が反映されます。
     * https://penguin.zoniichan.com
     * メールは実際には送信されません。slack は検証用の slack workspace に
     実際に届きます。参加したい方はご連絡ください。
