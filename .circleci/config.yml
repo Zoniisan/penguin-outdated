@@ -15,13 +15,13 @@ jobs:
           command: sleep 10
       - run:
           name: migrate
-          command: docker-compose run python ./manage.py migrate
+          command: docker-compose -f docker-compose.ci.yml run python ./manage.py migrate
       - run:
           name: test
-          command: docker-compose run python ./manage.py test
+          command: docker-compose -f docker-compose.ci.yml run python ./manage.py test
       - run:
-          name: docker-compose down
-          command: docker-compose down
+          name: docker-compose -f docker-compose.ci.yml down
+          command: docker-compose -f docker-compose.ci.yml down
   # zoniichan.com にSSH接続し、デプロイを実行
   deploy:
     machine:
