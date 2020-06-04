@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     environment:
-      CC_TEST_REPORTER_ID: ${CC_TEST_REPORTER_ID}
+      CC_TEST_REPORTER_ID: 8b985dcd7bc53aec56d94fd404539a0c36dcedc779cb39505b0d7e7af96e2623
     machine:
       image: circleci/classic:edge
     steps:
