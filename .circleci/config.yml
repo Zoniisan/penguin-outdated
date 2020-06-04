@@ -2,6 +2,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: ${CC_TEST_REPORTER_ID}
     machine:
       image: circleci/classic:edge
     steps:
@@ -17,8 +19,16 @@ jobs:
           name: migrate
           command: docker-compose -f docker-compose.ci.yml exec web python manage.py migrate
       - run:
-          name: test
-          command: docker-compose -f docker-compose.ci.yml exec web python manage.py test
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Run tests
+          command: |
+            ./cc-test-reporter before-build
+            docker-compose -f docker-compose.ci.yml exec web coverage run manage.py test
+            ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
       - run:
           name: docker-compose -f docker-compose.ci.yml down
           command: docker-compose -f docker-compose.ci.yml down

@@ -20,4 +20,5 @@ media
 .env.web.local
 
 # coverage
+.coverage
 htmlcov

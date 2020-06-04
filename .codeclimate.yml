@@ -1,0 +1,6 @@
+## other configuration excluded from example...
+exclude_patterns:
+- "**/static/"
+- "general_static/"
+- "**/media/"
+- "**/migrations/"
