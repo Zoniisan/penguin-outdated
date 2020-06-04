@@ -60,9 +60,16 @@
 
 
 ## Contribution
-万が一 PR などを送ってくださるなどということがあるのであれば、
-[Wiki](https://wiki.zoniichan.com/penguin/) の「開発」の項を
-お読みください。
+1. Issue を立てます。
+1. Branch `issue/(Issue ID)` を切ります。
+    * Ex. `issue/14`
+1. PR を投げます。
+1. @Zoniisan は初心者なので何も考えずに Approve することでしょう。
+
+* 一応 CircleCI による test と CodeClimate による check が行われます。
+* 落ちた場合は残念ですがやり直してください。
+* もし python コードを書き足した場合は、必要に応じて test も併せて書いていただくと
+ありがたいです。
 
 この度は興味を持っていただき、誠にありがとうございます。
 
