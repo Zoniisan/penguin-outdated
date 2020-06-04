@@ -15,10 +15,10 @@ jobs:
           command: sleep 10
       - run:
           name: migrate
-          command: docker-compose -f docker-compose.ci.yml run python ./manage.py migrate
+          command: docker-compose -f docker-compose.ci.yml exec web python manage.py migrate
       - run:
           name: test
-          command: docker-compose -f docker-compose.ci.yml run python ./manage.py test
+          command: docker-compose -f docker-compose.ci.yml exec web python manage.py test
       - run:
           name: docker-compose -f docker-compose.ci.yml down
           command: docker-compose -f docker-compose.ci.yml down
