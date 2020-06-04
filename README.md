@@ -18,7 +18,7 @@
 1. **環境変数ファイルを作成する必要があります**。
     * `./envfile.sh` を実行してください。
     * 何も変更しなくても大丈夫ですが、slack を実際に送りたい場合は
-    `.env.web` の `SLACK_TOKEN` の値を変更してください。
+    `.env.web.local` の `SLACK_TOKEN` の値を変更してください。
 
 1. `docker-compose up -f docker-compose.local.yml`
     * ビルドからやり直す場合は `--build` を付加してください
