@@ -16,3 +16,6 @@ env/local/.env.web: env/sample/.env.web
 # docker-compose build / up
 start:
 	docker-compose -f docker-compose.local.yml up --build
+
+detach:
+	docker-compose -f docker-compose.local.yml up --build -d

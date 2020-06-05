@@ -11,7 +11,7 @@ jobs:
       - checkout
       - run:
           name: make
-          command: make && make start
+          command: make && make detach
       - run:
           name: sleep for launch db to migrate at Django
           command: sleep 10
