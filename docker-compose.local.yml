@@ -5,7 +5,7 @@ services:
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    env_file: .env.db.local
+    env_file: env/local/.env.db
 
   redis:
     image: redis:latest
@@ -23,7 +23,7 @@ services:
       - .:/code
     ports:
       - "8000:8000"
-    env_file: .env.web.local
+    env_file: env/local/.env.web
     depends_on:
       - db
       - redis
@@ -37,7 +37,7 @@ services:
       - web
       - db
       - redis
-    env_file: .env.celery.local
+    env_file: env/local/.env.celery
 
 volumes:
   postgres_data:

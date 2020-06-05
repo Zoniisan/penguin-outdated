@@ -9,15 +9,8 @@ __pycache__
 media
 
 # environment variable files
-# for production
-.env.celery
-.env.db
-.env.web
-
-# for local
-.env.celery.local
-.env.db.local
-.env.web.local
+env/local
+env/production
 
 # coverage
 .coverage
