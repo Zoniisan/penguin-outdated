@@ -26,6 +26,7 @@
     * 実態はただの `docker-compose -f docker-compose.local.yml up --build` です
     * デタッチモードで起動したい場合は `make detach` を利用してください。
 1. `127.0.0.1:8000` にアクセスすれば PENGUIN が起動します
+1. 終了する場合は `make stop`
 
 * Mail, Slack 周りの設定変更は `make` コマンドで作成される
 `env/local/.env.web` の `MAIL_***`, `SLACK_TOKEN` を変更することで行ってください。
