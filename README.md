@@ -19,22 +19,24 @@
 ## Prerequirements
 * docker-compose
 
-## How to install and run
+## How to install and run (for local)
 1. `git clone git@github.com:Zoniisan/penguin.git`
-1. **環境変数ファイルを作成する必要があります**。
-    * `./envfile.sh` を実行してください。
-    * 何も変更しなくても大丈夫ですが、slack を実際に送りたい場合は
-    `.env.web.local` の `SLACK_TOKEN` の値を変更してください。
-
-1. `docker-compose up -f docker-compose.local.yml`
-    * ビルドからやり直す場合は `--build` を付加してください
-    * デタッチモードで起動する場合は `-d` を付加してください
+1. `make`
+1. `make start`
+    * 実態はただの `docker-compose -f docker-compose.local.yml up --build` です
+    * デタッチモードで起動したい場合は `make detach` を利用してください。
 1. `127.0.0.1:8000` にアクセスすれば PENGUIN が起動します
+1. 終了する場合は `make stop`
 
+* Mail, Slack 周りの設定変更は `make` コマンドで作成される
+`env/local/.env.web` の `MAIL_***`, `SLACK_TOKEN` を変更することで行ってください。
 
 ## Post-install
 * 開発環境を整えたい方など、詳しい情報を知りたい方は、wiki をご覧ください。
     * https://wiki.zoniichan.com/penguin/
+* 開発環境で `python manage.py` コマンドを実行する際は、下記のコマンドを入力する必要があります。
+    * `docker-compose -f docker-compose.local.yml exec web python manage.py`
+    * 長いので alias を作成したほうがいいと思います。
 
 
 ## Current Situation
@@ -65,6 +67,19 @@
     * Ex. `issue/14`
 1. PR を投げます。
 1. @Zoniisan は初心者なので何も考えずに Approve することでしょう。
+
+* Commit message は下記フォーマットに従ってください。
+```
+[fix|add|update|remove]: hogehoge #(issue ID)
+（空行）
+説明
+```
+（例）
+```
+fix: form in UserCreationView #0
+
+アカウント作成画面のフォームのバグを修正
+```
 
 * 一応 CircleCI による test と CodeClimate による check が行われます。
 * 落ちた場合は残念ですがやり直してください。
