@@ -5,10 +5,10 @@ services:
     image: postgres
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
-    env_file: .env.db
+    env_file: env/production/.env.db
 
   redis:
-    image: redis:latest
+    image: redis
     restart: always
     ports:
       - "6379:6379"
@@ -23,7 +23,7 @@ services:
       - static_penguin:/code/static
     ports:
       - 1337:8000
-    env_file: .env.web
+    env_file: env/production/.env.web
     depends_on:
       - db
       - redis
@@ -39,7 +39,7 @@ services:
       - web
       - db
       - redis
-    env_file: .env.celery
+    env_file: env/production/.env.celery
 
 volumes:
   postgres_data_prod:

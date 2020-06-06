@@ -10,14 +10,14 @@ jobs:
       # Djangoのテストを実行
       - checkout
       - run:
-          name: docker-compose up
-          command: docker-compose -f docker-compose.ci.yml up -d
+          name: make
+          command: make && make detach
       - run:
           name: sleep for launch db to migrate at Django
           command: sleep 10
       - run:
           name: migrate
-          command: docker-compose -f docker-compose.ci.yml exec web python manage.py migrate
+          command: docker-compose -f docker-compose.local.yml exec web python manage.py migrate
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -27,12 +27,12 @@ jobs:
           name: Run tests
           command: |
             ./cc-test-reporter before-build
-            docker-compose -f docker-compose.ci.yml exec web coverage run manage.py test
-            docker-compose -f docker-compose.ci.yml exec web coverage xml
+            docker-compose -f docker-compose.local.yml exec web coverage run manage.py test
+            docker-compose -f docker-compose.local.yml exec web coverage xml
             ./cc-test-reporter after-build --coverage-input-type coverage.py --exit-code $?
       - run:
-          name: docker-compose -f docker-compose.ci.yml down
-          command: docker-compose -f docker-compose.ci.yml down
+          name: docker-compose -f docker-compose.local.yml down
+          command: docker-compose -f docker-compose.local.yml down
   # zoniichan.com にSSH接続し、デプロイを実行
   deploy:
     machine:
