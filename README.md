@@ -33,6 +33,9 @@
 ## Post-install
 * 開発環境を整えたい方など、詳しい情報を知りたい方は、wiki をご覧ください。
     * https://wiki.zoniichan.com/penguin/
+* 開発環境で `python manage.py` コマンドを実行する際は、下記のコマンドを入力する必要があります。
+    * `docker-compose -f docker-compose.local.yml exec web python manage.py`
+    * 長いので alias を作成したほうがいいと思います。
 
 
 ## Current Situation
@@ -63,6 +66,19 @@
     * Ex. `issue/14`
 1. PR を投げます。
 1. @Zoniisan は初心者なので何も考えずに Approve することでしょう。
+
+* Commit message は下記フォーマットに従ってください。
+```
+[fix|add|update|remove]: hogehoge #(issue ID)
+（空行）
+説明
+```
+（例）
+```
+fix: form in UserCreationView #0
+
+アカウント作成画面のフォームのバグを修正
+```
 
 * 一応 CircleCI による test と CodeClimate による check が行われます。
 * 落ちた場合は残念ですがやり直してください。
