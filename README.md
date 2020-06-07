@@ -34,6 +34,9 @@
 ## Post-install
 * 開発環境を整えたい方など、詳しい情報を知りたい方は、wiki をご覧ください。
     * https://wiki.zoniichan.com/penguin/
+* 開発環境に依存パッケージ（`flake8`などを含む）をインストールする方法
+    1. （推奨）お手元に Python の仮想環境を作ってください。
+    1. その仮想環境内で `make develop` を実行してください。
 * 開発環境で `python manage.py` コマンドを実行する際は、下記のコマンドを入力する必要があります。
     * `docker-compose -f docker-compose.local.yml exec web python manage.py`
     * 長いので alias を作成したほうがいいと思います。
