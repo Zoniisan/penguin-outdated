@@ -22,3 +22,7 @@ detach:
 
 stop:
 	docker-compose -f docker-compose.local.yml down
+
+# configure develop environment
+develop:
+	pip install -r requirements.txt -r requirements.dev.txt
