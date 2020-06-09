@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView as AuthLoginView
 from django.contrib.auth.views import LogoutView as AuthLogoutView
 from django.core.exceptions import PermissionDenied
@@ -18,6 +17,7 @@ from django.views import generic
 from home import forms
 from home.models import Notice, User, UserToken
 from home.tasks import send_mail_async
+from home.views.helper_staff_member import get_staff_member_list
 from penguin import mixins
 
 
@@ -199,15 +199,7 @@ class StaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
 
         # 事務局員名簿を作成
         # 部局担当別、学年・氏名読みがな順でリストを作成
-        context['object_list'] = [
-            {
-                'group': group,
-                'member_list': group.user_set.all().order_by(
-                    '-grade', 'last_name_kana', 'first_name_kana'
-                )
-            }
-            for group in Group.objects.all().order_by('groupinfo__order')
-        ]
+        context['object_list'] = get_staff_member_list()
 
         return context
 

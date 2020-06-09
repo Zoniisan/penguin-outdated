@@ -141,62 +141,74 @@ urlpatterns = [
     ),
     path(
         'csv_group',
-        view_csv.CsvGroupView.as_view(),
+        view_csv.CsvView.as_view(),
+        {'mode': 'group'},
         name='csv_group'
     ),
     path(
         'csv_group_confirm',
-        view_csv.CsvGroupConfirmView.as_view(),
+        view_csv.CsvConfirmView.as_view(),
+        {'mode': 'group'},
         name='csv_group_confirm'
     ),
     path(
         'csv_group_success',
-        view_csv.CsvGroupSuccessView.as_view(),
+        view_csv.CsvSuccessView.as_view(),
+        {'mode': 'group'},
         name='csv_group_success'
     ),
     path(
         'csv_group_download',
-        view_csv.csv_group_download,
+        view_csv.csv_download,
+        {'mode': 'group'},
         name='csv_group_download'
     ),
     path(
         'csv_contact_kind',
-        view_csv.CsvContactKindView.as_view(),
+        view_csv.CsvView.as_view(),
+        {'mode': 'contact_kind'},
         name='csv_contact_kind'
     ),
     path(
         'csv_contact_kind_confirm',
-        view_csv.CsvContactKindConfirmView.as_view(),
+        view_csv.CsvConfirmView.as_view(),
+        {'mode': 'contact_kind'},
         name='csv_contact_kind_confirm'
     ),
     path(
         'csv_contact_kind_success',
-        view_csv.CsvContactKindSuccessView.as_view(),
+        view_csv.CsvSuccessView.as_view(),
+        {'mode': 'contact_kind'},
         name='csv_contact_kind_success'
     ),
     path(
         'csv_contact_kind_download',
-        view_csv.csv_contact_kind_download,
+        view_csv.csv_download,
+        {'mode': 'contact_kind'},
         name='csv_contact_kind_download'
     ),
     path(
         'csv_staff_register',
-        view_csv.CsvStaffRegisterView.as_view(),
+        view_csv.CsvView.as_view(),
+        {'mode': 'staff_register'},
         name='csv_staff_register'
     ),
     path(
         'csv_staff_register_confirm',
-        view_csv.CsvStaffRegisterConfirmView.as_view(),
+        view_csv.CsvConfirmView.as_view(),
+        {'mode': 'staff_register'},
         name='csv_staff_register_confirm'
     ),
     path(
         'csv_staff_register_success',
-        view_csv.CsvStaffRegisterSuccessView.as_view(),
+        view_csv.CsvSuccessView.as_view(),
+        {'mode': 'staff_register'},
         name='csv_staff_register_success'
     ),
     path(
         'csv_staff_register_download',
-        view_csv.csv_staff_register_download,
+        view_csv.csv_download,
+        {'mode': 'staff_register'},
         name='csv_staff_register_download'
     ),
 ]
