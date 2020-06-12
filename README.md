@@ -1,5 +1,5 @@
 # PENGUIN
-[![django](https://img.shields.io/badge/django-3.0.6-214c33.svg?style=flat)](https://djangoproject.com/)
+[![django](https://img.shields.io/badge/django-3.0.7-214c33.svg?style=flat)](https://djangoproject.com/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![CircleCI](https://circleci.com/gh/Zoniisan/penguin.svg?style=shield)](https://circleci.com/gh/Zoniisan/penguin)
 [![Maintainability](https://api.codeclimate.com/v1/badges/47f3158caa24c86ea009/maintainability)](https://codeclimate.com/github/Zoniisan/penguin/maintainability)
