@@ -24,7 +24,7 @@ def get_staff_member_list():
 def pk_in_list_or_403(pk, pk_list):
     """pk が pk_list に入っていなければ 403 を返す
     """
-    if pk in pk_list:
+    if pk not in pk_list:
         raise PermissionDenied
 
 
@@ -34,7 +34,7 @@ def craete_random_strings(count=100):
     文字数を指定しない場合は 100 文字とする
     """
     return ''.join(
-        random.choices(string.ascii_letters + string.digits, count)
+        random.choices(string.ascii_letters + string.digits, k=count)
     )
 
 
@@ -43,5 +43,10 @@ def get_accesible_pk_list(user, model):
 
     ContactKind, Notification に利用
     model はモデル名をすべて小文字にして文字列で与えること
+    システム管理者はすべてのオブジェクトにアクセス可能とする
     """
-    return user.groups.values_list(model, flat=True).distinct()
+    # システム管理者はすべての Group に所属するものとする
+    group_list = Group.objects.all() if user.is_superuser else user.groups
+
+    # 対応するオブジェクトの pk のリストを返す
+    return group_list.values_list(model, flat=True).distinct()

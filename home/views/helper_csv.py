@@ -193,9 +193,6 @@ def csv_to_object_contact_kind(csvfile):
     # 初期化
     contact_kind_dict = {}
 
-    # header 行を pass
-    next(reader)
-
     # 1 行ずつデータを取り出し
     for row in reader:
         contact_kind_name = row[0]

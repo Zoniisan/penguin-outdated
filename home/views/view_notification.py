@@ -128,7 +128,7 @@ class NotificationStaffDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
     def get(self, request, **kwargs):
         # 自分の担当が送信した通知以外は 403
         pk_in_list_or_403(
-            self.kwargs['pk'],
+            int(self.kwargs['pk']),
             get_accesible_pk_list(self.request.user, 'notification')
         )
 
