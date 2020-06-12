@@ -1,10 +1,9 @@
 import csv
 
-from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.views import generic
 
 from home import forms
@@ -14,6 +13,9 @@ from penguin import mixins
 
 class CsvView(mixins.AdminOnlyMixin, generic.FormView):
     """CSV 処理 フォーム画面
+
+    CSV ファイルのダウンロードとアップロードを行う。
+    mode に応じたテンプレートを返すだけ。
     """
 
     form_class = forms.CsvForm
@@ -29,10 +31,13 @@ class CsvView(mixins.AdminOnlyMixin, generic.FormView):
 class CsvConfirmView(mixins.AdminOnlyMixin, generic.FormView):
     """CSV 処理 確認画面
 
+    アップロードした CSV ファイルを読み込み、
+    処理結果のプレビューを表示する。
     """
     form_class = forms.CsvForm
 
     def form_valid(self, form):
+        # mode, csvfile を取得
         mode = self.kwargs['mode']
         csvfile = form.cleaned_data['csvfile']
 
@@ -42,34 +47,39 @@ class CsvConfirmView(mixins.AdminOnlyMixin, generic.FormView):
         # mode ごとに必要な情報を取り出す
         if mode == 'group':
             context['valid_group_dict'], context['invalid_group_dict'] = \
-                helper_csv.csv_group_to_dict(csvfile)
+                helper_csv.csv_to_object_group(csvfile)
         elif mode == 'contact_kind':
             context['contact_kind_dict'] = \
-                helper_csv.csv_contact_kind_to_dict(csvfile)
+                helper_csv.csv_to_object_contact_kind(csvfile)
         elif mode == 'staff_register':
             context['valid_user_dict'], context['invalid_user_list'] = \
-                helper_csv.csv_staff_register_to_dict(csvfile)
+                helper_csv.csv_to_object_staff_register(csvfile)
         else:
             # 通常ここには到達しないはず
             raise Http404
 
+        # 画面描画
         return render(self.request, 'home/csv_%s_confirm.html' % mode, context)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'アップロードしたファイルに不備があります')
-        return redirect('home:csv_%s' % self.kwargs['mode'])
+        # ファイルに不備があった場合
+        return helper_csv.file_invalid(self.request, self.kwargs['mode'])
 
 
 class CsvSuccessView(mixins.AdminOnlyMixin, generic.FormView):
     """CSV 処理 完了画面
+
+    実際に処理を行い、処理結果を表示する。
     """
 
     form_class = forms.CsvForm
 
     def form_valid(self, form):
+        # mode, csvfile を取得する
         mode = self.kwargs['mode']
         csvfile = form.cleaned_data['csvfile']
 
+        # mode に応じて実際の処理を行う
         if mode == 'group':
             context = helper_csv.success_group(csvfile)
         elif mode == 'contact_kind':
@@ -80,14 +90,20 @@ class CsvSuccessView(mixins.AdminOnlyMixin, generic.FormView):
             # 通常ここには到達しないはず
             raise Http404
 
+        # 画面描画
         return render(self.request, 'home/csv_%s_success.html' % mode, context)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'アップロードしたファイルに不備があります')
-        return redirect('home:csv_%s' % self.kwargs['mode'])
+        # ファイルに不備があった場合
+        return helper_csv.file_invalid(self.request, self.kwargs['mode'])
 
 
 def csv_download(request, mode):
+    """CSV テンプレートファイルダウンロード
+
+    CSV 処理に用いるテンプレートファイルをダウンロードさせる。
+    CSV ファイルはこの場で作成し、ファイルはサーバーに残さない。
+    """
     # アクセスはシステム管理者のみ
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -100,13 +116,14 @@ def csv_download(request, mode):
     # CSV 書き出し
     writer = csv.writer(response)
 
+    # mode に応じてヘッダー行を描画
     if mode == 'group':
         writer.writerow([
             'Group.name（例：総合対応局 システム担当）',
             'GroupInfo.email（例：system@example.com）',
             'GroupInfo.slack_ch（例：st-system）'
         ])
-    elif mode == 'contact_kind' or mode == 'staff_register':
+    else:
         # 部局担当リスト（管轄する部局の欄に 1 を入力する）
         group_list = list(
             Group.objects.all().order_by(
@@ -125,8 +142,9 @@ def csv_download(request, mode):
             writer.writerow(
                 ['User.username（例：1029290000）'] + group_list
             )
-    else:
-        # 通常ここには到達しない
-        raise Http404
+        else:
+            # 通常ここには到達しない
+            raise Http404
 
+    # response を返す
     return response

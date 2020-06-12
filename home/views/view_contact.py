@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -10,13 +9,15 @@ from django_slack import slack_message
 
 from home.models import Contact, ContactKind
 from home.tasks import send_mail_async
+from home.views.helper import get_accesible_pk_list, pk_in_list_or_403
 from penguin import mixins
 
 
 class ContactView(LoginRequiredMixin, generic.CreateView):
     """お問い合わせ作成画面
 
-    要ログイン
+    Contact を作成するフォームを表示する。
+    ついでに事務局の位置情報と電話番号も表示する。
     """
 
     template_name = 'home/contact.html'
@@ -25,10 +26,8 @@ class ContactView(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy('home:contact')
 
     def form_valid(self, form):
-        # writer を登録
+        # writer を登録して Save する
         form.instance.writer = self.request.user
-
-        # save
         self.object = form.save()
 
         # お問い合わせの種類に応じた管轄部局に slack を送る
@@ -87,14 +86,13 @@ class ContactView(LoginRequiredMixin, generic.CreateView):
             'home/mails/contact_received.txt', context
         )
         to_list = [form.instance.writer.email]
-
         send_mail_async.delay(
             subject,
             body,
             to_list
         )
 
-        # message 発出
+        # message を登録する
         messages.success(
             self.request, 'お問い合わせを受理しました！'
         )
@@ -102,23 +100,11 @@ class ContactView(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
-def get_contact_kind_accesible_pk_list(self):
-    """管轄内のお問い合わせ種別の pk リストを取得
-
-    ログインしている User が所属している Group を管轄に含む
-    ContactKind の pk を取得
-    """
-
-    return self.request.user.groups.values_list(
-        'contactkind', flat=True
-    ).distinct()
-
-
 class ContactKindView(mixins.StaffOnlyMixin, generic.TemplateView):
     """お問い合わせ種別一覧画面
 
-    お問い合わせの種別と管轄を表示
-    スタッフ専用
+    お問い合わせの種別と管轄を表示する。
+    自分の担当に対応する種別のお問い合わせのみを選択できる。
     """
 
     template_name = 'home/contact_kind.html'
@@ -133,7 +119,7 @@ class ContactKindView(mixins.StaffOnlyMixin, generic.TemplateView):
         # ContactKind の pk を取得
         # （i.e. 管轄内のお問い合わせ種別の pk リストを取得）
         context['contact_kind_accesible_pk_list'] = \
-            get_contact_kind_accesible_pk_list(self)
+            get_accesible_pk_list(self.request.user, 'contactkind')
 
         return context
 
@@ -148,17 +134,24 @@ class ContactListView(mixins.StaffOnlyMixin, generic.TemplateView):
     template_name = 'home/contact_list.html'
 
     def get(self, request, **kwargs):
-        # 管轄外のスタッフのアクセスを阻止
-        if int(self.kwargs['pk']) \
-                not in get_contact_kind_accesible_pk_list(self):
-            raise PermissionDenied
+        # そもそも ContactKind が存在しない場合は 404
+        contact_kind = get_object_or_404(ContactKind, pk=self.kwargs['pk'])
+
+        # お問い合わせ管轄ではないスタッフのアクセスを拒否
+        pk_in_list_or_403(
+            contact_kind.pk,
+            get_accesible_pk_list(self.request.user, 'contactkind')
+        )
 
         return super().get(request, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # お問い合わせ種別
         context['contact_kind'] = ContactKind.objects.get(pk=self.kwargs['pk'])
+
+        # お問い合わせ種別を指定した上でお問い合わせのリストを作成
         context['contact_list'] = Contact.objects.filter(
             kind__pk=self.kwargs['pk']
         ).order_by(
@@ -177,17 +170,20 @@ class ContactDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
     template_name = 'home/contact_detail.html'
 
     def get(self, request, **kwargs):
-        # 管轄外のスタッフのアクセスを阻止
+        # そもそも Contact が存在しない場合は 404
         contact = get_object_or_404(Contact, pk=self.kwargs['pk'])
 
-        if contact.kind.pk \
-                not in get_contact_kind_accesible_pk_list(self):
-            raise PermissionDenied
+        # 管轄外のスタッフのアクセスを阻止
+        pk_in_list_or_403(
+            contact.kind.pk,
+            get_accesible_pk_list(self.request.user, 'contactkind')
+        )
 
         return super().get(request, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # 詳細を表示する Contact
         context['contact'] = Contact.objects.get(pk=self.kwargs['pk'])
         return context

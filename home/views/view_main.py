@@ -1,5 +1,3 @@
-import random
-import string
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -17,7 +15,7 @@ from django.views import generic
 from home import forms
 from home.models import Notice, User, UserToken
 from home.tasks import send_mail_async
-from home.views.helper_staff_member import get_staff_member_list
+from home.views.helper import craete_random_strings, get_staff_member_list
 from penguin import mixins
 
 
@@ -46,9 +44,7 @@ class SignUpTokenView(generic.CreateView):
 
     def form_valid(self, form):
         # token を生成
-        form.instance.token = ''.join(
-            random.choices(string.ascii_letters + string.digits, k=100)
-        )
+        form.instance.token = craete_random_strings()
 
         # email を送信
         subject = 'PENGUIN アカウント仮登録完了'
@@ -62,7 +58,6 @@ class SignUpTokenView(generic.CreateView):
         }
         body = render_to_string('home/mails/signup_token.txt', context)
         to_list = [form.cleaned_data['email']]
-
         send_mail_async.delay(
             subject,
             body,
@@ -110,8 +105,13 @@ class SignUpView(generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # UserToken を取得
         user_token = UserToken.objects.get(token=self.kwargs['token'])
+
+        # Email を UserToken.email から取得
         context['email'] = user_token.email
+
         return context
 
     def form_valid(self, form):
@@ -122,9 +122,8 @@ class SignUpView(generic.CreateView):
 
         # 以下は shibboleth が導入されるまでの暫定的措置
         # eptid はランダム生成
-        form.instance.shib_eptid = ''.join(
-            random.choices(string.ascii_letters + string.digits, k=10)
-        )
+        form.instance.shib_eptid = craete_random_strings(10)
+
         # affiliation は一律 student
         form.instance.shib_affiliation = 'student'
 
@@ -143,7 +142,6 @@ class SignUpView(generic.CreateView):
         }
         body = render_to_string('home/mails/signup_finish.txt', context)
         to_list = [self.object.email]
-
         send_mail_async.delay(
             subject,
             body,
@@ -188,8 +186,6 @@ class ProfileView(LoginRequiredMixin, generic.TemplateView):
 
 class StaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
     """事務局員名簿
-
-    スタッフ専用
     """
 
     template_name = 'home/staff_list.html'
@@ -206,8 +202,6 @@ class StaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
 
 def download_staff_vcards(request, mode):
     """事務局員の連絡先を vcard 形式でダウンロード
-
-    スタッフ専用
     """
 
     # アクセスはスタッフのみ

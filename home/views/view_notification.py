@@ -10,13 +10,13 @@ from django.views import generic
 from home import forms
 from home.models import Contact, Notification, NotificationRead, User
 from home.tasks import send_mail_async
+from home.views.helper import get_accesible_pk_list, pk_in_list_or_403
 from penguin import mixins
 from penguin.functions import set_paging_parameter
 
 
 class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
     """通知システム
-    スタッフのみ
     """
 
     template_name = 'home/notification.html'
@@ -41,19 +41,16 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
 
         # 宛先にメールを送信する
         subject = '通知: %s' % form.instance.title
-
         context = {
             'notification': self.object,
             'base_url': settings.BASE_URL,
         }
-
         for user in self.object.to.all():
             # body を描画
             context['user'] = user
             body = render_to_string(
                 'home/mails/notification.txt', context
             )
-
             # メールを送信
             send_mail_async.delay(
                 subject,
@@ -98,17 +95,6 @@ class NotificationView(mixins.StaffOnlyMixin, generic.CreateView):
         return context
 
 
-def get_notification_accesible_pk_list(self):
-    """管轄内の通知の pk リストを取得
-    ログインしている User が所属している Group を担当に指定した
-    Notification の pk を取得
-    """
-
-    return self.request.user.groups.values_list(
-        'notification', flat=True
-    ).distinct()
-
-
 class NotificationStaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
     """通知一覧画面（スタッフ向け）
 
@@ -120,12 +106,14 @@ class NotificationStaffListView(mixins.StaffOnlyMixin, generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        # 自分の担当が送信した通知のみを取得
         notification_list = Notification.objects.filter(
-            pk__in=get_notification_accesible_pk_list(self)
+            pk__in=get_accesible_pk_list(self.request.user, 'notification')
         ).order_by('-create_datetime')
 
         # ページング処理
         set_paging_parameter(self.kwargs, context, notification_list)
+
         return context
 
 
@@ -138,9 +126,11 @@ class NotificationStaffDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
     template_name = 'home/notification_staff_detail.html'
 
     def get(self, request, **kwargs):
-        if int(self.kwargs['pk']) not in \
-                get_notification_accesible_pk_list(self):
-            raise PermissionDenied
+        # 自分の担当が送信した通知以外は 403
+        pk_in_list_or_403(
+            self.kwargs['pk'],
+            get_accesible_pk_list(self.request.user, 'notification')
+        )
 
         return super().get(request, **kwargs)
 
@@ -154,6 +144,9 @@ class NotificationStaffDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
         context['notification'] = notification
 
         # 既読リスト
+        # NotificationRead が存在する User については
+        # 'read' → NotificationRead を登録
+        # そうでなければ 'read' → None とする
         to_list = list()
         for user in notification.to.all():
             try:
@@ -171,6 +164,7 @@ class NotificationStaffDetailView(mixins.StaffOnlyMixin, generic.TemplateView):
                     'read': None
                 })
 
+        # context に登録
         context['to_list'] = to_list
 
         return context
@@ -230,7 +224,7 @@ class NotificationDetailView(LoginRequiredMixin, generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # 通知
+        # 通知 該当がなければ 404
         notification = get_object_or_404(Notification, pk=self.kwargs['pk'])
         context['notification'] = notification
 
