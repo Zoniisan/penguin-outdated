@@ -186,8 +186,13 @@
                 <ul class="list-unstyled">
                     <li class="{% block ac_contact_admin %}{% endblock ac_contact_admin %}"><a
                             href="{% url 'home:contact_kind' %}"><i class="fas fa-envelope"></i>お問い合わせ管理</a></li>
-                    <li class="{% block ac_notification %}{% endblock ac_notification %}"><a
-                            href="{% url 'home:notification' %}"><i class="fas fa-bell"></i>通知システム</a></li>
+                    <li class="{% block ac_notification %}{% endblock ac_notification %}"><a href="#notification"
+                            aria-expanded="false" data-toggle="collapse"> <i class="fas fa-bell"></i></i>通知システム</a>
+                        <ul id="notification" class="collapse list-unstyled ">
+                            <li><a href="{% url 'home:notification_staff_list' %}">送信済み通知一覧</a></li>
+                            <li><a href="{% url 'home:notification' %}">通知作成</a></li>
+                        </ul>
+                    </li>
                     <li class="{% block ac_staff_list %}{% endblock ac_staff_list %}"><a
                             href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
@@ -202,7 +207,7 @@
                             href="{% url 'home:notification_all' %}"> <i class="far fa-bell"></i></i>全員送信（通知Sys.）</a>
                     </li>
                     <li class="{% block ac_csv %}{% endblock ac_csv %}"><a href="#csvRegister" aria-expanded="false"
-                            data-toggle="collapse"> <i class="icon-interface-windows"></i>CSV 処理 </a>
+                            data-toggle="collapse"> <i class="fas fa-file-csv"></i></i>CSV 処理 </a>
                         <ul id="csvRegister" class="collapse list-unstyled ">
                             <li><a href="{% url 'home:csv_group' %}">Group, GroupInfo</a></li>
                             <li><a href="{% url 'home:csv_contact_kind' %}">ContactKind</a></li>

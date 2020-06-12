@@ -18,7 +18,6 @@ active
 {% block contents %}
 <nav class="breadcrumb mb-2 px-3">
     <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
-    <a class="breadcrumb-item" href="{% url 'home:notification' %}">通知システム</a>
     <span class="breadcrumb-item active">送信済み通知一覧</span>
 </nav>
 
@@ -28,6 +27,11 @@ active
     </div>
     <div class="card-body">
         {% if page_object.object_list %}
+        {% if request.user.is_superuser %}
+        <div class="alert alert-warning" role="alert">
+            <p class="mb-0">システム管理者のため、すべての通知を表示しています。</p>
+        </div>
+        {% else %}
         <div class="alert alert-info" role="alert">
             <p>あなたが閲覧できるのは、下記の担当が送信した通知のみです。</p>
             <ul>
@@ -36,6 +40,7 @@ active
                 {% endfor %}
             </ul>
         </div>
+        {% endif %}
         <div class="table-responsive">
             <table class="table table-hover table-clickable text-nowrap">
                 <thead>

@@ -1,8 +1,10 @@
 from django.contrib.auth.models import Group
+from django.http import HttpRequest
 from django.test import TestCase
 
 from home import models
 from home.templatetags.get_notifications import GetNotifications
+from home.templatetags.pagination import pagination
 
 
 class GetNotificationsTestCase(TestCase):
@@ -147,4 +149,43 @@ class GetNotificationsTestCase(TestCase):
             self.context['unread_count'],
             2,
             '既読通知が正しく取得できていません'
+        )
+
+
+class GetPaginationTestCase(TestCase):
+    """[test] pagination
+    """
+
+    def setUp(self):
+        """context を定義
+        """
+        request = HttpRequest()
+        request.path = 'hoge/fuga/p=21'
+
+        self.context = {
+            'page_object': 'hoge_0',
+            'page_no': 'hoge_1',
+            'page_range': 'hoge_2',
+            'request': request
+        }
+
+    def test_context(self):
+        """context の検証
+
+        url は /p=[0-9]+ を削除
+        それ以外はそのまま返す
+        """
+        new_context = pagination(self.context)
+
+        self.assertEqual(
+            new_context['page_object'], 'hoge_0'
+        )
+        self.assertEqual(
+            new_context['page_no'], 'hoge_1'
+        )
+        self.assertEqual(
+            new_context['page_range'], 'hoge_2'
+        )
+        self.assertEqual(
+            new_context['url'], 'hoge/fuga'
         )

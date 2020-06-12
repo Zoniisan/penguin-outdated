@@ -2,7 +2,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import Http404
 
 
-def set_paging_parameter(kwargs, context, object_list, count=20, suffix=''):
+def set_paging_parameter(kwargs, context, object_list, count=20):
     """ページング処理を行う際のパラメーターを context に登録する
 
     Args:
@@ -10,9 +10,6 @@ def set_paging_parameter(kwargs, context, object_list, count=20, suffix=''):
         context(dict): パラメーターを設定したい context
         list(list): ページング処理したいリスト
         count(int): 1 ページに表示する件数
-        prefix(str):
-            context の各キーに設定したい surfix
-            Ex. suffix='hoge' -> context['page_no_hoge'] = 20
 
     Examples:
         views.py:
@@ -26,10 +23,10 @@ def set_paging_parameter(kwargs, context, object_list, count=20, suffix=''):
 
     # 存在しないページを指定した場合は失格（404 エラー）
     try:
-        context['page_object%s' % suffix] = paginator.page(page_no)
+        context['page_object'] = paginator.page(page_no)
     except (EmptyPage, PageNotAnInteger):
         raise Http404
 
     # その他描画に必要なパラメーターを登録
-    context['page_no%s' % suffix] = int(page_no)
-    context['page_range%s' % suffix] = paginator.page_range
+    context['page_no'] = int(page_no)
+    context['page_range'] = paginator.page_range
