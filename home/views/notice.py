@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from home.models import Notice
+from home.views.helper import register_notice_list_to_context
 from penguin import mixins
 
 
@@ -25,8 +26,9 @@ class NoticeView(mixins.AdminOnlyMixin, generic.CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # 全 Notice を取得
-        context['notice_list'] = Notice.objects.all()
+        # Notice（お知らせ）を表示
+        register_notice_list_to_context(context)
+
         return context
 
 

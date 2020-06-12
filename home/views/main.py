@@ -13,9 +13,10 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from home import forms
-from home.models import Notice, User, UserToken
+from home.models import User, UserToken
 from home.tasks import send_mail_async
-from home.views.helper import craete_random_strings, get_staff_member_list
+from home.views.helper import (craete_random_strings, get_staff_member_list,
+                               register_notice_list_to_context)
 from penguin import mixins
 
 
@@ -29,7 +30,8 @@ class IndexView(generic.TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Notice（お知らせ）を表示
-        context['notice_list'] = Notice.objects.all()
+        register_notice_list_to_context(context)
+
         return context
 
 

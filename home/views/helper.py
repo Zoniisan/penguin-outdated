@@ -4,6 +4,8 @@ import string
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 
+from home.models import Notice
+
 
 def get_staff_member_list():
     """ スタッフ名簿のリストを作成
@@ -50,3 +52,9 @@ def get_accesible_pk_list(user, model):
 
     # 対応するオブジェクトの pk のリストを返す
     return group_list.values_list(model, flat=True).distinct()
+
+
+def register_notice_list_to_context(context):
+    """お知らせの全リストを context に登録する
+    """
+    context['notice_list'] = Notice.objects.all()
