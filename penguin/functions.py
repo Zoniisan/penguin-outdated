@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import Http404
 
@@ -30,3 +32,12 @@ def set_paging_parameter(kwargs, context, object_list, count=20):
     # その他描画に必要なパラメーターを登録
     context['page_no'] = int(page_no)
     context['page_range'] = paginator.page_range
+
+
+def period_active(period):
+    """Period 系モデルを調べて現在時刻が有効期間かどうかを調べる
+    """
+    return period.objects.filter(
+        start__lte=datetime.now(),
+        finish__gte=datetime.now()
+    ).exists()

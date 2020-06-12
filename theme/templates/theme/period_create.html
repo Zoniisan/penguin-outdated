@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+
+{% block title %}
+統一テーマ管理
+{% endblock title %}
+
+{% block header %}
+統一テーマ管理 期間作成
+{% endblock header %}
+
+{% block ac_theme %}
+active
+{% endblock ac_theme %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'theme:period' %}">統一テーマ管理</a>
+    <span class="breadcrumb-item active">期間作成</span>
+</nav>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'theme:period' %}">期間管理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">受理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">予選投票</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">決選投票</a>
+    </li>
+</ul>
+
+<div class="card">
+    <form action="" method="post" class="form">
+        <div class="card-header">
+            {{ mode_verbose }}期間登録
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning" role="alert">
+                <b>確認</b>: {{ mode_verbose }}期間を登録します。
+                下で指定した日時に現在時刻が含まれる場合、即時有効になります。
+            </div>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+        </div>
+        <div class="card-footer">
+            {% buttons %}
+            <button type="submit" class="btn btn-primary btn-block">
+                OK
+            </button>
+            {% endbuttons %}
+        </div>
+    </form>
+</div>
+
+{% endblock contents %}
+
+{% block extrajs %}
+{{ form.media }}
+{% endblock extrajs %}

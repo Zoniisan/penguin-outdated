@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}
+統一テーマ管理
+{% endblock title %}
+
+{% block header %}
+統一テーマ管理 期間管理
+{% endblock header %}
+
+{% block ac_theme %}
+active
+{% endblock ac_theme %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">統一テーマ管理</span>
+</nav>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'theme:period' %}">期間管理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">受理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">予選投票</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">決選投票</a>
+    </li>
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <div class="alert alert-primary" role="alert">
+            {{ now }} 現在の状況を表示しています。
+        </div>
+        <div class="row">
+            <div class="col">
+                <h3>統一テーマ案応募期間</h3>
+                {% if app_active %}
+                <p class="text-success">
+                    <i class="fas fa-check"></i>&nbsp;有効
+                </p>
+                {% else %}
+                <p class="text-danger">
+                    <i class="fas fa-times"></i>&nbsp;無効
+                </p>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="float-right">
+                    <a class="btn btn-outline-primary" href="{% url 'theme:period_application' %}" role="button"><i
+                            class="fas fa-plus"></i>&nbsp;追加</a>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>開始</th>
+                    <th>終了</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in app_list %}
+                <tr>
+                    <td>{{ obj.start }}</td>
+                    <td>{{ obj.finish }}</td>
+                    <th><button class="btn btn-danger" data-toggle="modal"
+                            data-target="#modal_application_{{ obj.pk }}">削除</button></th>
+                </tr>
+                <!-- Modal -->
+                <div class="modal fade" id="modal_application_{{ obj.pk }}" tabindex="-1" role="dialog"
+                    aria-labelledby="modal_title_application_{{ obj.pk }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">本当に削除しますか？</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                もしこの期間に現在時刻が含まれる場合、削除すると即時無効になります。
+                                <div class="alert alert-danger" role="alert">
+                                    <b>統一テーマ応募期間</b>: {{ obj }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">やめる</button>
+                                <a href="{% url 'theme:period_delete' 'application' obj.pk %}"
+                                    class="btn btn-danger">削除</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col">
+                <h3>予選投票期間</h3>
+                {% if first_active %}
+                <p class="text-success">
+                    <i class="fas fa-check"></i>&nbsp;有効
+                </p>
+                {% else %}
+                <p class="text-danger">
+                    <i class="fas fa-times"></i>&nbsp;無効
+                </p>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="float-right">
+                    <a class="btn btn-outline-primary" href="{% url 'theme:period_first_vote' %}" role="button"><i
+                            class="fas fa-plus"></i>&nbsp;追加</a>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>開始</th>
+                    <th>終了</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in first_list %}
+                <tr>
+                    <td>{{ obj.start }}</td>
+                    <td>{{ obj.finish }}</td>
+                    <th><button class="btn btn-danger" data-toggle="modal"
+                            data-target="#modal_first_vote_{{ obj.pk }}">削除</button></th>
+                </tr>
+                <!-- Modal -->
+                <div class="modal fade" id="modal_first_vote_{{ obj.pk }}" tabindex="-1" role="dialog"
+                    aria-labelledby="modal_title_first_vote_{{ obj.pk }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">本当に削除しますか？</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                もしこの期間に現在時刻が含まれる場合、削除すると即時無効になります。
+                                <div class="alert alert-danger" role="alert">
+                                    <b>予備投票期間</b>: {{ obj }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">やめる</button>
+                                <a href="{% url 'theme:period_delete' 'first_vote' obj.pk %}"
+                                    class="btn btn-danger">削除</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col">
+                <h3>決選投票期間</h3>
+                {% if final_active %}
+                <p class="text-success">
+                    <i class="fas fa-check"></i>&nbsp;有効
+                </p>
+                {% else %}
+                <p class="text-danger">
+                    <i class="fas fa-times"></i>&nbsp;無効
+                </p>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="float-right">
+                    <a class="btn btn-outline-primary" href="{% url 'theme:period_final_vote' %}" role="button"><i
+                            class="fas fa-plus"></i>&nbsp;追加</a>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>開始</th>
+                    <th>終了</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in final_list %}
+                <tr>
+                    <td>{{ obj.start }}</td>
+                    <td>{{ obj.finish }}</td>
+                    <th><button class="btn btn-danger" data-toggle="modal"
+                            data-target="#modal_final_vote_{{ obj.pk }}">削除</button></th>
+                </tr>
+                <!-- Modal -->
+                <div class="modal fade" id="modal_final_vote_{{ obj.pk }}" tabindex="-1" role="dialog"
+                    aria-labelledby="modal_title_final_vote_{{ obj.pk }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">本当に削除しますか？</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                もしこの期間に現在時刻が含まれる場合、削除すると即時無効になります。
+                                <div class="alert alert-danger" role="alert">
+                                    <b>決選投票期間</b>: {{ obj }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">やめる</button>
+                                <a href="{% url 'theme:period_delete' 'final_vote' obj.pk %}"
+                                    class="btn btn-danger">削除</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock contents %}

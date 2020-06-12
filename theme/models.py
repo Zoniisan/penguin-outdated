@@ -1,5 +1,7 @@
-from django.db import models
 from django.core.validators import MinLengthValidator
+from django.db import models
+
+from home.models import PeriodBase
 
 
 class Theme(models.Model):
@@ -101,61 +103,25 @@ class FinalVote(models.Model):
     )
 
 
-class PeriodApplication(models.Model):
+class PeriodApplication(PeriodBase):
     # settings
     class Meta:
         verbose_name = 'テーマ案募集期間'
         verbose_name_plural = verbose_name
         ordering = ('start',)
 
-    def __str__(self):
-        return '-'.join([str(self.start), str(self.finish)])
 
-    # fields
-    start = models.DateTimeField(
-        verbose_name='開始'
-    )
-
-    finish = models.DateTimeField(
-        verbose_name='終了'
-    )
-
-
-class PeriodFirstVote(models.Model):
+class PeriodFirstVote(PeriodBase):
     # settings
     class Meta:
         verbose_name = '予選投票期間'
         verbose_name_plural = verbose_name
         ordering = ('start',)
 
-    def __str__(self):
-        return '-'.join([str(self.start), str(self.finish)])
 
-    # fields
-    start = models.DateTimeField(
-        verbose_name='開始'
-    )
-
-    finish = models.DateTimeField(
-        verbose_name='終了'
-    )
-
-
-class PeriodFinalVote(models.Model):
+class PeriodFinalVote(PeriodBase):
     # settings
     class Meta:
         verbose_name = '決選投票期間'
         verbose_name_plural = verbose_name
         ordering = ('start',)
-
-    def __str__(self):
-        return '-'.join([str(self.start), str(self.finish)])
-
-    # fields
-    start = models.DateTimeField(
-        verbose_name='開始'
-    )
-
-    finish = models.DateTimeField(
-        verbose_name='終了'
-    )
