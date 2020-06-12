@@ -199,7 +199,7 @@ def csv_to_object_contact_kind(csvfile):
     # 1 行ずつデータを取り出し
     for row in reader:
         contact_kind_name = row[0]
-        group_list = get_group_list(row)
+        group_list = get_active_group_list(row)
 
         # 管轄となる Group を取得
         contact_kind_dict[contact_kind_name] = group_list
@@ -227,7 +227,7 @@ def csv_to_object_staff_register(csvfile):
     for row in reader:
         username = row[0]
         if User.objects.filter(username=username).exists():
-            group_list = get_group_list(row)
+            group_list = get_active_group_list(row)
             valid_username_dict[username] = {
                 'user': User.objects.get(username=username),
                 'group_list': group_list
@@ -253,7 +253,19 @@ def csvfile_to_reader(csvfile):
     return reader
 
 
-def get_group_list(row):
+def get_group_list():
+    """CSV 処理で header に表示する Group を取得
+    """
+    return list(
+        Group.objects.all().order_by(
+            'groupinfo'
+        ).values_list(
+            'name', flat=True
+        )
+    )
+
+
+def get_active_group_list(row):
     """CSV 処理で 1 が入っている Group を取得
     """
     return [

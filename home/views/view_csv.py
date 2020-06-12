@@ -1,6 +1,5 @@
 import csv
 
-from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
@@ -123,28 +122,21 @@ def csv_download(request, mode):
             'GroupInfo.email（例：system@example.com）',
             'GroupInfo.slack_ch（例：st-system）'
         ])
-    else:
+    elif mode == 'contact_kind':
         # 部局担当リスト（管轄する部局の欄に 1 を入力する）
-        group_list = list(
-            Group.objects.all().order_by(
-                'groupinfo'
-            ).values_list(
-                'name', flat=True
-            )
+        # データ書き出し
+        writer.writerow(
+            ['ContactKind.name（例：11 月祭全般についてのお問い合わせ）']
+            + helper_csv.get_group_list()
         )
-        if mode == 'contact_kind':
-            # データ書き出し
-            writer.writerow(
-                ['ContactKind.name（例：11 月祭全般についてのお問い合わせ）'] + group_list
-            )
-        elif mode == 'staff_register':
-            # データ書き出し
-            writer.writerow(
-                ['User.username（例：1029290000）'] + group_list
-            )
-        else:
-            # 通常ここには到達しない
-            raise Http404
+    elif mode == 'staff_register':
+        # データ書き出し
+        writer.writerow(
+            ['User.username（例：1029290000）'] + helper_csv.get_group_list()
+        )
+    else:
+        # 通常ここには到達しない
+        raise Http404
 
     # response を返す
     return response
