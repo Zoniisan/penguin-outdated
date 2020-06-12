@@ -86,8 +86,7 @@ fix: form in UserCreationView #0
 
 * 一応 CircleCI による test と CodeClimate による check が行われます。
 * 落ちた場合は残念ですがやり直してください。
-* もし python コードを書き足した場合は、必要に応じて test も併せて書いていただくと
-ありがたいです。
+* test の記載は現在後回しにしています（万が一 Contributer が増えたらやります）。
 
 この度は興味を持っていただき、誠にありがとうございます。
 
