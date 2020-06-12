@@ -7,13 +7,7 @@ from django.core import mail
 
 
 @shared_task
-def send_mail_async(
-    subject,
-    body,
-    to_list,
-    from_email=settings.EMAIL_HOST_USER,
-    reply_to=['system@example.com']
-):
+def send_mail_async(subject, body, to_list, **kwargs):
     """メールを非同期送信する
 
     Note:
@@ -25,7 +19,7 @@ def send_mail_async(
     mail.EmailMessage(
         subject,
         body,
-        from_email,
+        kwargs.get('from_email', settings.EMAIL_HOST_USER),
         to_list,
-        reply_to=reply_to
+        reply_to=kwargs.get('reply_to', ['system@example.com'])
     ).send()
