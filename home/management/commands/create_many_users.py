@@ -25,62 +25,53 @@ class Command(BaseCommand):
     help = '検証用の User をたくさん作ります。'
 
     def handle(self, *args, **options):
-        # 生徒
-        for i in range(0, 100):
-            zfilled_i = str(i).zfill(2)
-            u = User.objects.create(
-                username='10000000%s' % zfilled_i,
-                last_name='生徒',
-                first_name='テスト%s' % zfilled_i,
-                last_name_kana='せいと',
-                first_name_kana='てすと',
-                email='student%s@test.com' % zfilled_i,
-                tel='334100000%s' % zfilled_i,
-                faculty='総',
-                grade='B1',
-                shib_eptid='ept_student_%s' % zfilled_i,
-                shib_affiliation="student"
-            )
-            u.set_password('hogehoge')
-            u.save()
-            self.stdout.write(self.style.SUCCESS('Create(student): "%s"' % u))
+        # 情報
+        type_list = [
+            {
+                'name': '生徒',
+                'kana': 'せいと',
+                'english': 'student',
+                'grade': 'B1',
+                'affiliation': 'student'
+            },
+            {
+                'name': '先生',
+                'kana': 'せんせい',
+                'english': 'faculty',
+                'grade': '他',
+                'affiliation': 'faculty'
+            },
+            {
+                'name': '事務局員',
+                'kana': 'じむきょくいん',
+                'grade': 'B1',
+                'english': 'officer',
+                'affiliation': 'student'
+            }
+        ]
 
-        # 先生
-        for i in range(0, 100):
-            zfilled_i = str(i).zfill(2)
-            u = User.objects.create(
-                username='20000000%s' % zfilled_i,
-                last_name='先生',
-                first_name='テスト%s' % zfilled_i,
-                last_name_kana='せんせい',
-                first_name_kana='てすと',
-                email='faculty%s@test.com' % zfilled_i,
-                tel='334200000%s' % zfilled_i,
-                faculty='総',
-                grade='他',
-                shib_eptid='ept_faculty_%s' % zfilled_i,
-                shib_affiliation="faculty"
-            )
-            u.set_password('hogehoge')
-            u.save()
-            self.stdout.write(self.style.SUCCESS('Create(faculty): "%s"' % u))
-
-        # 事務局員
-        for i in range(0, 100):
-            zfilled_i = str(i).zfill(2)
-            u = User.objects.create(
-                username='30000000%s' % zfilled_i,
-                last_name='事務局員',
-                first_name='テスト%s' % zfilled_i,
-                last_name_kana='じむきょくいん',
-                first_name_kana='てすと',
-                email='office%s@test.com' % zfilled_i,
-                tel='334300000%s' % zfilled_i,
-                faculty='総',
-                grade='B1',
-                shib_eptid='ept_officer_%s' % zfilled_i,
-                shib_affiliation="student",
-            )
-            u.set_password('hogehoge')
-            u.save()
-            self.stdout.write(self.style.SUCCESS('Create(office): "%s"' % u))
+        # 実際に作成
+        for type_id in range(0, 3):
+            for i in range(0, 100):
+                type_dict = type_list[type_id]
+                zfilled_i = str(i).zfill(2)
+                u = User.objects.create(
+                    username='%s0000000%s' % (str(type_id + 1), zfilled_i),
+                    last_name=type_dict['name'],
+                    first_name='テスト%s' % zfilled_i,
+                    last_name_kana=type_dict['kana'],
+                    first_name_kana='てすと',
+                    email='%s%s@test.com' %
+                    (type_dict['english'], zfilled_i),
+                    tel='334%s00000%s' % (str(type_id + 1), zfilled_i),
+                    faculty='総',
+                    grade=type_dict['grade'],
+                    shib_eptid='ept_%s_%s' %
+                    (type_dict['english'], zfilled_i),
+                    shib_affiliation=type_dict['affiliation']
+                )
+                u.set_password('hogehoge')
+                u.save()
+                self.stdout.write(self.style.SUCCESS(
+                    'Created(%s): "%s"' % (type_dict['english'], u)
+                ))
