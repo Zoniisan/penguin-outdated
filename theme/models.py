@@ -9,6 +9,7 @@ class Theme(models.Model):
     class Meta:
         verbose_name = '統一テーマ案'
         verbose_name_plural = verbose_name
+        ordering = ('pk',)
 
     def __str__(self):
         return self.theme

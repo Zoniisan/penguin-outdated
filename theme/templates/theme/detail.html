@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}
+統一テーマ管理
+{% endblock title %}
+
+{% block header %}
+統一テーマ管理 詳細
+<br>{{ theme.theme }}
+{% endblock header %}
+
+{% block ac_theme_staff %}
+active
+{% endblock ac_theme_staff %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <a class="breadcrumb-item" href="{% url 'theme:list' %}">統一テーマ管理</a>
+    <span class="breadcrumb-item active">{{ theme.theme }}</span>
+</nav>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'theme:period' %}">期間管理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'theme:list' %}">受理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">予選投票</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">決選投票</a>
+    </li>
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <h3>統一テーマ案詳細</h3>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>統一テーマ案</th>
+                    <td>{{ theme.theme }}</td>
+                </tr>
+                <tr>
+                    <th>趣意文</th>
+                    <td>{{ theme.description|linebreaksbr }}</td>
+                </tr>
+                <tr>
+                    <th>応募者</th>
+                    <td>{{ theme.writer }}</td>
+                </tr>
+                <tr>
+                    <th>応募日時</th>
+                    <td>{{ theme.create_datetime }}</td>
+                </tr>
+                <tr>
+                    <th>予選コード</th>
+                    <td>{{ theme.first_id }}</td>
+                </tr>
+                <tr>
+                    <th>決選コード</th>
+                    <td>{{ theme.final_id }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        応募者詳細
+        <div class="float-right">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseWriterDetail"
+                aria-expanded="false" aria-controls="collapseWriterDetail">
+                展開
+            </button>
+        </div>
+    </div>
+    <div class="collapse" id="collapseWriterDetail">
+        <div class="card-body">
+            <h2>個人情報</h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>学生番号</th>
+                        <td>{{ theme.writer.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>姓</th>
+                        <td>{{ theme.writer.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>名</th>
+                        <td>{{ theme.writer.first_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>姓（かな）</th>
+                        <td>{{ theme.writer.last_name_kana }}</td>
+                    </tr>
+                    <tr>
+                        <th>名（かな）</th>
+                        <td>{{ theme.writer.first_name_kana }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>連絡先</h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>メールアドレス</th>
+                        <td>{{ theme.writer.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>電話番号</th>
+                        <td>{{ theme.writer.tel }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>所属</h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>所属</th>
+                        <td>{{ theme.writer.get_faculty_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>学年</th>
+                        <td>{{ theme.writer.get_grade_display }}</td>
+                    </tr>
+                    <tr>
+                        <th>affiliation*</th>
+                        <td>
+                            {{ theme.writer.shib_affiliation }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><b>*affiliation</b>: Shibboleth(ECS-ID, SPS-ID) 認証により取得したあなたの属性です。
+                「student」以外の場合（「faculty, staff」など）は一部機能が制限されます。</p>
+
+            <h2>権限情報</h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>権限</th>
+                        <td>
+                            {% if theme.writer.is_superuser %}
+                            <span class="badge badge-danger">ADMIN</span>&nbsp;システム管理者
+                            {% elif theme.writer.is_staff %}
+                            <span class="badge badge-success">STAFF</span>&nbsp;事務局員
+                            {% else %}
+                            <span class="badge badge-primary">NORMAL</span>&nbsp;一般京大生
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if theme.writer.is_staff %}
+                    <th>部局</th>
+                    <td>
+                        {% for group in theme.writer.groups.all %}
+                        {{ group }}
+                        {% if not forloop.last %}
+                        <br>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <h2>ログイン情報</h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>最終ログイン</th>
+                        <td>{{ theme.writer.last_login }}</td>
+                    </tr>
+                    <tr>
+                        <th>初アクセス</th>
+                        <td>{{ theme.writer.date_joined }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col">
+                <a class="btn btn-info btn-block" href="mailto:{{ theme.writer.email }}" role="button"><i
+                        class="fas fa-envelope"></i>&nbsp;メール</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-info btn-block" href="tel:{{ theme.writer.tel }}" role="button"><i
+                        class="fas fa-phone"></i>&nbsp;電話</a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock contents %}

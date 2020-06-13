@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}
+統一テーマ管理
+{% endblock title %}
+
+{% block header %}
+統一テーマ管理 受理
+{% endblock header %}
+
+{% block ac_theme_staff %}
+active
+{% endblock ac_theme_staff %}
+
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">統一テーマ管理</span>
+</nav>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'theme:period' %}">期間管理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url 'theme:list' %}">受理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">予選投票</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">決選投票</a>
+    </li>
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <div class="alert alert-primary" role="alert">
+            <ul class="mb-0">
+                <li>「詳細」を選択すると趣意文や応募者の情報を閲覧できます。</li>
+                <li>「受理」を選択すると予選コードが割り当てられ、予選投票の候補になります。</li>
+                <li>受理を取り消す場合は「取消」を選択してください。</li>
+            </ul>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <h3>統一テーマ案一覧（受付順）</h3>
+            </div>
+            <div class="col">
+                <div class="float-right">
+                    <a class="btn btn-outline-primary" href="{% url 'theme:csv_download' %}" role="button"><i
+                            class="fas fa-file-csv"></i>&nbsp;CSV ファイルダウンロード(UTF-8)</a>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>予選コード</th>
+                    <th>統一テーマ</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for theme in theme_list %}
+                <tr>
+                    <th{% if theme.first_id %} class="table-success" {% endif %}>
+                        {% if theme.first_id %}{{ theme.first_id }}{% else %}保留{% endif %}</th>
+                        <td>{{ theme.theme }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{% url 'theme:detail' theme.pk %}" role="button">詳細</a>
+                            {% if theme.first_id %}
+                            <a class="btn btn-danger" href="{% url 'theme:disaccept' theme.pk %}" role="button">取消</a>
+                            {% else %}
+                            <a class="btn btn-success" href="{% url 'theme:accept' theme.pk %}" role="button">受理</a>
+                            {% endif %}
+                        </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock contents %}

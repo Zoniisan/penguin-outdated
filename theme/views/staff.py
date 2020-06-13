@@ -1,7 +1,9 @@
+import csv
 from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth import mixins
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views import generic
 
@@ -116,3 +118,121 @@ def mode_to_period_information(mode):
     }
 
     return verbose_dict[mode]
+
+
+class ListView(mixins.PermissionRequiredMixin, generic.TemplateView):
+    """統一テーマ案一覧・受理画面
+
+    統一テーマ案の一覧を表示し、受理・詳細表示が可能
+    """
+    template_name = 'theme/list.html'
+    permission_required = 'theme.view_theme'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 統一テーマ案一覧
+        context['theme_list'] = models.Theme.objects.all()
+
+        return context
+
+
+class DetailView(mixins.PermissionRequiredMixin, generic.TemplateView):
+    """統一テーマ案詳細
+
+    統一テーマ案の詳細、応募者の情報を表示
+    """
+    template_name = 'theme/detail.html'
+    permission_required = 'theme.view_theme'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 統一テーマ案一覧
+        context['theme'] = models.Theme.objects.get(pk=self.kwargs['pk'])
+
+        return context
+
+
+def accept(self, pk):
+    """統一テーマ案を受理する
+    """
+    # アクセスは統一テーマ案担当のみ
+    if not self.user.has_perm('theme.view_theme'):
+        raise PermissionError
+
+    # pk で指定した統一テーマ案に仮の予選コードを与える
+    theme = models.Theme.objects.get(pk=pk)
+    theme.first_id = 'TA'
+    theme.save()
+
+    # 予選コードの振り直し
+    apply_first_id()
+
+    # message 登録
+    messages.success(self, '受理しました')
+
+    return redirect('theme:list')
+
+
+def disaccept(self, pk):
+    """統一テーマ案を受理取り消しする
+    """
+    # アクセスは統一テーマ案担当のみ
+    if not self.user.has_perm('theme.view_theme'):
+        raise PermissionError
+
+    # pk で指定した統一テーマ案から予選コードを剥奪する
+    theme = models.Theme.objects.get(pk=pk)
+    theme.first_id = None
+    theme.save()
+
+    # 予選コードの振り直し
+    apply_first_id()
+
+    # message 登録
+    messages.error(self, '受理を取り消しました')
+
+    return redirect('theme:list')
+
+
+def apply_first_id():
+    """予選コードを振り直す
+    """
+    first_accept_theme_list = [
+            obj for obj in models.Theme.objects.all() if obj.first_accepted()
+        ]
+
+    # 予選コードを振り直す
+    for count, first_accept_theme in enumerate(first_accept_theme_list):
+        first_accept_theme.first_id = "TA-%s" % str(count + 1).zfill(3)
+        first_accept_theme.save()
+
+
+def csv_download(self):
+    """CSV ファイルダウンロード
+
+    統一テーマ案の CSV ファイルをダウンロードする。
+    CSV ファイルはこの場で作成し、ファイルはサーバーに残さない。
+    """
+    # アクセスは統一テーマ案担当のみ
+    if not self.user.has_perm('theme.view_theme'):
+        raise PermissionError
+
+    # ファイルはサーバーに残さない（危なっかしいので）
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = \
+        'attachment; filename="theme.csv"'
+
+    # CSV 書き出し
+    writer = csv.writer(response)
+
+    # ヘッダー行
+    writer.writerow(['統一テーマ案', '趣意文'])
+
+    # 各データ行
+    for theme in models.Theme.objects.all():
+        writer.writerow([theme.theme, theme.description])
+
+    # response を返す
+    return response

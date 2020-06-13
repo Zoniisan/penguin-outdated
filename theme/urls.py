@@ -38,4 +38,29 @@ urlpatterns = [
         staff.period_delete,
         name='period_delete'
     ),
+    path(
+        'staff/list',
+        staff.ListView.as_view(),
+        name='list'
+    ),
+    path(
+        'staff/detail/<int:pk>',
+        staff.DetailView.as_view(),
+        name='detail'
+    ),
+    path(
+        'staff/accept/<int:pk>',
+        staff.accept,
+        name='accept'
+    ),
+    path(
+        'staff/disaccept/<int:pk>',
+        staff.disaccept,
+        name='disaccept'
+    ),
+    path(
+        'staff/csv_download',
+        staff.csv_download,
+        name='csv_download'
+    ),
 ]
