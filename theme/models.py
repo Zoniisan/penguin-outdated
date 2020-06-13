@@ -13,16 +13,31 @@ class Theme(models.Model):
     def __str__(self):
         return self.theme
 
+    # functions
+    def first_accepted(self):
+        return self.first_id is not None
+
+    def final_accepted(self):
+        return self.final_id is not None
+
+    def first_count(self):
+        return self.firstvote_set.all().count()
+
+    def final_count(self):
+        return self.finalvote_set.all().count()
+
     # fields
     theme = models.CharField(
         verbose_name='統一テーマ',
-        max_length=100
+        max_length=100,
+        help_text='1 文字以上 100 文字以下で入力してください。'
     )
 
-    description = models.CharField(
+    description = models.TextField(
         verbose_name='趣意文',
         max_length=400,
-        validators=[MinLengthValidator(100)]
+        validators=[MinLengthValidator(100)],
+        help_text='100 文字以上 400 文字以下で入力してください。'
     )
 
     writer = models.OneToOneField(
@@ -36,14 +51,16 @@ class Theme(models.Model):
         auto_now_add=True
     )
 
-    accepted = models.BooleanField(
-        verbose_name='受理',
-        default=False
+    first_id = models.CharField(
+        verbose_name='予選コード',
+        max_length=6,
+        null=True, blank=True
     )
 
-    final = models.BooleanField(
-        verbose_name='決勝進出',
-        default=False
+    final_id = models.CharField(
+        verbose_name='決選コード',
+        max_length=6,
+        null=True, blank=True
     )
 
 

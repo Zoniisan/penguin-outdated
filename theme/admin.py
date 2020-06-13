@@ -7,18 +7,31 @@ from theme import models
 class ThemeAdmin(admin.ModelAdmin):
     """ [Admin] 統一テーマ案
     """
+
+    def first_count(self, obj):
+        return obj.first_count()
+    first_count.short_description = '予選票数'
+
+    def final_count(self, obj):
+        return obj.final_count()
+    final_count.short_description = '決選票数'
+
     fieldsets = (
         ('応募内容', {'fields': ('theme', 'description')}),
         ('応募者情報', {'fields': (
             'writer',
         )}),
         ('状態', {'fields': (
-            'create_datetime', 'accepted', 'final'
+            'create_datetime', 'first_id', 'final_id'
+        )}),
+        ('票数', {'fields': (
+            'first_count', 'final_count'
         )}),
     )
 
     list_display = (
-        'theme', 'writer', 'create_datetime', 'accepted', 'final'
+        'theme', 'writer', 'create_datetime',
+        'first_id', 'first_count', 'final_id', 'final_count'
     )
 
     search_fields = (
@@ -29,12 +42,8 @@ class ThemeAdmin(admin.ModelAdmin):
         'writer',
     )
 
-    list_filter = (
-        'accepted', 'final'
-    )
-
     readonly_fields = (
-        'create_datetime',
+        'create_datetime', 'first_count', 'final_count'
     )
 
 

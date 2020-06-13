@@ -1,0 +1,18 @@
+{% extends 'mails/base.txt' %}
+
+{% block contents %}
+{{ theme.writer }} 様
+
+下記の通り統一テーマ案の応募を受け付けました。
+スタッフがこの統一テーマ案についてお問い合わせを行うことがあります。
+
+応募者
+{{ theme.writer }}
+
+統一テーマ案
+{{ theme.theme }}
+
+趣意文
+{{ theme.description|linebreaksbr }}
+
+{% endblock contents %}

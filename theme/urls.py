@@ -6,6 +6,11 @@ app_name = 'theme'
 
 urlpatterns = [
     path(
+        'application',
+        main.ApplicationView.as_view(),
+        name='application'
+    ),
+    path(
         'staff/period',
         staff.PeriodView.as_view(),
         name='period'

@@ -17,3 +17,8 @@ jQuery(function ($) {
         });
 
 });
+
+// 文字数カウンター
+function countLength(text, field) {
+    document.getElementById(field).innerHTML = text.length;
+}

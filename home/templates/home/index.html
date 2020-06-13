@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load period %}
+
 {% block title %}
 ホーム
 {% endblock title %}
@@ -63,6 +65,40 @@ active
         </div>
     </div>
 </div>
+{% endif %}
+
+<!--Home Menu for periodic event -->
+{% if request.user.email %}
+{% if theme_application_active %}
+<div class="mb-4">
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-warning btn-lg btn-block btn-warning-pulse" href="{% url 'theme:application' %}" role="button">
+                統一テーマ案応募</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if theme_first_vote_active %}
+<div class="mb-4">
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-warning btn-lg btn-block btn-warning-pulse" href="{% url 'home:profile' %}" role="button">
+                統一テーマ案予選投票</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if theme_final_vote_active %}
+<div class="mb-4">
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-warning btn-lg btn-block btn-warning-pulse" href="{% url 'home:profile' %}" role="button">
+                統一テーマ案決選投票</a>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endif %}
 
 <!--Home Menu for not PC-->

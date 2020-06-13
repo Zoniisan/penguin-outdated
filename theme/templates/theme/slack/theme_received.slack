@@ -1,0 +1,10 @@
+{% extends django_slack %}
+{% load django_slack %}
+
+{% block channel %}
+#{{ group.groupinfo.slack_ch }}
+{% endblock channel %}
+
+{% block text %}
+統一テーマが応募されました。
+{% endblock text %}

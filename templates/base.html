@@ -1,6 +1,7 @@
 {% load static %}
 {% load bootstrap4 %}
 {% load get_notifications %}
+{% load period %}
 
 <!DOCTYPE html>
 <html>
@@ -169,11 +170,24 @@
                         {% endif %}
                     </div>
                 </div>
+                {% period %}
                 <!-- Sidebar Navidation Menus--><span class="heading">Menu</span>
                 <ul class="list-unstyled">
                     <li class="{% block ac_home %}{% endblock ac_home %}"><a href="{% url 'home:index' %}"><i
                                 class="fas fa-home"></i>ホーム</a></li>
                     {% if request.user.is_authenticated %}
+                    {% if theme_application_active %}
+                    <li class="{% block ac_theme_application %}{% endblock ac_theme_application %}"><a
+                            href="{% url 'theme:application' %}"><i class="fas fa-vote-yea"></i>統一テーマ案応募</a></li>
+                    {% endif %}
+                    {% if theme_first_vote_active %}
+                    <li class="{% block ac_theme_first_vote %}{% endblock ac_theme_first_vote %}"><a
+                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ予選投票</a></li>
+                    {% endif %}
+                    {% if theme_final_vote_active %}
+                    <li class="{% block ac_theme_final_vote %}{% endblock ac_theme_final_vote %}"><a
+                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ決選投票</a></li>
+                    {% endif %}
                     <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i
                                 class="fas fa-id-badge"></i>プロフィール</a></li>
                     <li class="{% block ac_contact %}{% endblock ac_contact %}"><a href="{% url 'home:contact' %}"><i
@@ -195,8 +209,8 @@
                     <li class="{% block ac_staff_list %}{% endblock ac_staff_list %}"><a
                             href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
                     {% if perms.theme.view_theme %}
-                    <li class="{% block ac_theme %}{% endblock ac_theme %}"><a href="{% url 'theme:period' %}"><i
-                                class="fas fa-vote-yea"></i>統一テーマ管理</a></li>
+                    <li class="{% block ac_theme_staff %}{% endblock ac_theme_staff %}"><a
+                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ管理</a></li>
                     {% endif %}
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
