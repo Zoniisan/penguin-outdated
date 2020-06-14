@@ -69,5 +69,6 @@ class VoteAdmin(admin.ModelAdmin):
         'theme',
     )
 
+
 admin.site.register(models.FirstVote, VoteAdmin)
 admin.site.register(models.FinalVote, VoteAdmin)

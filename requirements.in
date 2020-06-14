@@ -1,5 +1,6 @@
 # celery 4.4.4 が落ちるので 4.4.2 で固定中（6/7現在）
 celery==4.4.2
+django-countable-field
 Django
 django-admin-sortable2
 django-bootstrap-datepicker-plus

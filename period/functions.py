@@ -27,7 +27,7 @@ def get_period_object_list():
     """
     # Period 系モデルを列挙
     period_list = [
-        {'period': models.PeriodThemeSubmit, 'url': 'home:index'},
+        {'period': models.PeriodThemeSubmit, 'url': 'theme:submit'},
         {'period': models.PeriodThemeFirstVote, 'url': 'home:index'},
         {'period': models.PeriodThemeFinalVote, 'url': 'home:index'}
     ]

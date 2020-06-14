@@ -48,6 +48,7 @@ INSTALLED_APPS += [
     'adminsortable2',
     'bootstrap4',
     'bootstrap_datepicker_plus',
+    'countable_field',
     'django_slack',
     'django_select2',
     'django_celery_results',
