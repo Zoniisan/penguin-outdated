@@ -206,6 +206,10 @@
                             href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
                     <li class="{% block ac_period %}{% endblock ac_period %}"><a href="{% url 'period:list' %}"><i
                                 class="far fa-calendar-alt"></i>期間設定</a></li>
+                    {% if perms.theme.can_view_theme %}
+                    <li class="{% block ac_theme %}{% endblock ac_theme %}"><a href="{% url 'theme:staff_list' %}"><i
+                                class="fas fa-vote-yea"></i>統一テーマ管理</a></li>
+                    {% endif %}
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}

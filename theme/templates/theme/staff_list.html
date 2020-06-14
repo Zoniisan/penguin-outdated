@@ -1,0 +1,50 @@
+{% extends 'theme/staff_base.html' %}
+
+{% block ac_staff_list %}
+active
+{% endblock ac_staff_list %}
+
+{% block staff_contents %}
+<h2>統一テーマ案一覧（応募順）</h2>
+<div class="alert alert-primary" role="alert">
+    <ul class="mb-0">
+        <li>各行を選択すると趣意文や応募者の情報を閲覧できます。</li>
+        <li>「受理」を選択すると予選コードが割り当てられ、予選投票の候補になります。</li>
+        <li>受理を取り消す場合は「取消」を選択してください。</li>
+        <li>予選コードは応募順（受理順ではありません）に割り当てられます。</li>
+    </ul>
+</div>
+<div class="row mb-4">
+    <div class="offset-xl-6 col-xl-6">
+        <div class="float-right">
+            <a class="btn btn-outline-primary" href="{% url 'theme:csv_download' %}" role="button"><i
+                    class="fas fa-file-csv"></i>&nbsp;CSV ファイルダウンロード(UTF-8)</a>
+        </div>
+    </div>
+</div>
+<table class="table table-hover table-clickable">
+    <thead>
+        <tr>
+            <th>予選コード</th>
+            <th>統一テーマ案</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for theme in theme_list %}
+        <tr data-href="{% url 'theme:staff_detail' theme.pk %}">
+            <th{% if theme.first_id %} class="table-success" {% endif %}>
+                {% if theme.first_id %}{{ theme.first_id }}{% else %}保留{% endif %}</th>
+                <td>{{ theme.theme }}</td>
+                <td>
+                    {% if theme.first_id %}
+                    <a class="btn btn-primary" href="{% url 'theme:staff_disaccept' theme.pk %}" role="button">取消</a>
+                    {% else %}
+                    <a class="btn btn-primary" href="{% url 'theme:staff_accept' theme.pk %}" role="button">受理</a>
+                    {% endif %}
+                </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock staff_contents %}

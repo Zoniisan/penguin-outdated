@@ -1,0 +1,39 @@
+{% extends 'theme/staff_base.html' %}
+
+{% block staff_contents %}
+<h2>統一テーマ案詳細</h2>
+<table class="table">
+    <tbody>
+        <tr>
+            <th class="text-nowrap">統一テーマ</th>
+            <td>{{ theme.theme }}</td>
+        </tr>
+        <tr>
+            <th class="text-nowrap">趣意文</th>
+            <td>{{ theme.description }}</td>
+        </tr>
+        <tr>
+            <th class="text-nowrap">応募者</th>
+            <td>{{ theme.writer }}</td>
+        </tr>
+        <tr>
+            <th class="text-nowrap">応募日時</th>
+            <td>{{ theme.create_datetime }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>状況</h2>
+<table class="table">
+    <tbody>
+        <tr{% if theme.first_id %} class="table-success" {% endif %}>
+            <th>予選</th>
+            <td>{% if theme.first_id %}{{ theme.first_id }}（{{ theme.first_count }}票）{% else %}保留{% endif %}</td>
+            </tr>
+            <tr{% if theme.final_id %} class="table-danger" {% endif %}>
+                <th>決選</th>
+                <td>{% if theme.final_id %}{{ theme.final_id }}（{{ theme.first_count }}票）{% else %}落選{% endif %}</td>
+                </tr>
+    </tbody>
+</table>
+{% endblock staff_contents %}
