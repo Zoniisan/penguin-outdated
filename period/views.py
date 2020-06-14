@@ -2,8 +2,7 @@ from django.views import generic
 
 from datetime import datetime
 from penguin.mixins import StaffOnlyMixin
-from period import models
-from period.functions import is_active
+from period.functions import get_period_object_list
 
 
 class ListView(StaffOnlyMixin, generic.TemplateView):
@@ -15,24 +14,10 @@ class ListView(StaffOnlyMixin, generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # ListView に表示したい Period 系モデルを列挙
-        period_list = [
-            models.PeriodThemeSubmit,
-            models.PeriodThemeFirstVote,
-            models.PeriodThemeFinalVote
-        ]
-
         # 現在時刻を登録
         context['now'] = datetime.now()
 
         # context に情報を登録する
-        context['object_list'] = [
-            {
-                'name': period._meta.verbose_name,
-                'list': period.objects.all(),
-                'active': is_active(period)
-            } for period in period_list
-        ]
+        context['object_list'] = get_period_object_list()
 
         return context

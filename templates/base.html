@@ -1,6 +1,7 @@
 {% load static %}
 {% load bootstrap4 %}
 {% load get_notifications %}
+{% load period %}
 
 <!DOCTYPE html>
 <html>
@@ -175,6 +176,14 @@
                     <li class="{% block ac_home %}{% endblock ac_home %}"><a href="{% url 'home:index' %}"><i
                                 class="fas fa-home"></i>ホーム</a></li>
                     {% if request.user.is_authenticated %}
+                    <!--periodic event-->
+                    {% period %}
+                    {% for period in period_list %}
+                    {% if period.active %}
+                    <li class="period"><a href="{% url period.url %}"><i
+                                class="fas fa-star"></i>{{ period.omitted_name }}</a></li>
+                    {% endif %}
+                    {% endfor %}
                     <li class="{% block ac_profile %}{% endblock ac_profile %}"><a href="{% url 'home:profile' %}"><i
                                 class="fas fa-id-badge"></i>プロフィール</a></li>
                     <li class="{% block ac_contact %}{% endblock ac_contact %}"><a href="{% url 'home:contact' %}"><i
@@ -195,8 +204,8 @@
                     </li>
                     <li class="{% block ac_staff_list %}{% endblock ac_staff_list %}"><a
                             href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
-                    <li class="{% block ac_period %}{% endblock ac_period %}"><a
-                            href="{% url 'period:list' %}"><i class="far fa-calendar-alt"></i>期間設定</a></li>
+                    <li class="{% block ac_period %}{% endblock ac_period %}"><a href="{% url 'period:list' %}"><i
+                                class="far fa-calendar-alt"></i>期間設定</a></li>
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>
                 {% endif %}

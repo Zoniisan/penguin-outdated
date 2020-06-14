@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from period import models
+
 
 def is_active(period):
     """各期間が有効かどうかを返す
@@ -16,5 +18,26 @@ def is_active(period):
     # start <= now <= finish なるインスタンスがあれば True
     return period.objects.filter(
         start__lte=now,
-        finish__lte=now
+        finish__gte=now
     ).exists()
+
+
+def get_period_object_list():
+    """period 系のモデルについて情報を返す
+    """
+    # Period 系モデルを列挙
+    period_list = [
+        {'period': models.PeriodThemeSubmit, 'url': 'home:index'},
+        {'period': models.PeriodThemeFirstVote, 'url': 'home:index'},
+        {'period': models.PeriodThemeFinalVote, 'url': 'home:index'}
+    ]
+
+    return [
+        {
+            'name': period['period']._meta.verbose_name,
+            'omitted_name': period['period']._meta.verbose_name.rstrip('期間'),
+            'list': period['period'].objects.all(),
+            'active': is_active(period['period']),
+            'url': period['url']
+        } for period in period_list
+    ]
