@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}
+統一テーマ案予選投票
+{% endblock title %}
+
+{% block header %}
+統一テーマ案予選投票
+{% endblock header %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">統一テーマ案予選投票</span>
+</nav>
+
+<div class="card">
+    <div class="card-body">
+        {% if voted %}
+        <div class="alert alert-warning" role="alert">
+            <p class="mb-0">既に投票が完了しています。投票ありがとうございました！あなたの推しテーマをツイートしよう！</p>
+        </div>
+        {% endif %}
+        <div class="alert alert-primary" role="alert">
+            <ul class="mb-0">
+                <li>各行を選択すると趣意文を閲覧でき、投票できます。</li>
+                <li>投票は 1 人 1 回までです。投票者の個人情報は記録されません。</li>
+                <li>予選投票の上位 10 件が決選投票にかけられます。</li>
+            </ul>
+        </div>
+        <h3>統一テーマ案一覧（受付順）</h3>
+        <table class="table table-hover table-clickable">
+            <thead>
+                <tr>
+                    <th>予選コード</th>
+                    <th>統一テーマ案</th>
+                    <th>tweet</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for theme in theme_list %}
+                <tr data-href="#" data-toggle="modal" data-target="#theme-{{ theme.pk }}">
+                    <th>{{ theme.first_id }}</th>
+                    <td>{{ theme.theme }}</td>
+                    <td><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button"
+                            data-text="【予選投票】「{{ theme.theme }}」を共有しました！京大生なら誰でも統一テーマ投票に参加できます！" data-size="large"
+                            data-url="{{ base_url }}{% url 'theme:first_vote' %}" data-hashtags="NF統一テーマ投票"
+                            data-lang="ja" data-show-count="false">Tweet</a></td>
+                </tr>
+                <!-- Modal -->
+                <div class="modal fade" id="theme-{{ theme.pk }}" tabindex="-1" role="dialog"
+                    aria-labelledby="modelTitleId" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">統一テーマ案詳細</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h3>統一テーマ案</h3>
+                                <p>{{ theme.theme }}</p>
+                                <h3>趣意文</h3>
+                                <p>{{ theme.description|linebreaksbr }}</p>
+                                <p class="text-danger">投票は 1 人 1 回までで、取り消しはできません。</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">もどる</button>
+                                {% if not voted %}
+                                <a href="{% url 'theme:first_vote_pk' theme.pk %}" type="button"
+                                    class="btn btn-primary">投票する</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock contents %}
+
+{% block extrajs %}
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{% endblock extrajs %}

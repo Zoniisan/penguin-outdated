@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import mixins
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -59,3 +60,66 @@ class SubmitView(mixins.LoginRequiredMixin, generic.FormView):
         messages.success(self.request, '応募しました！')
 
         return super().form_valid(form)
+
+
+class FirstVoteView(mixins.LoginRequiredMixin, generic.TemplateView):
+    """統一テーマ案予選投票
+    """
+    template_name = 'theme/first_vote.html'
+
+    def get(self, request, **kwargs):
+        # 期間外の場合は 403
+        if not is_active(period_models.PeriodThemeFirstVote):
+            raise PermissionDenied
+
+        return super().get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 予選コードが振られた統一テーマ一覧
+        context['theme_list'] = models.Theme.objects.filter(
+            first_id__isnull=False
+        )
+
+        # 予選投票済みかどうか
+        context['voted'] = models.FirstVoteEptid.objects.filter(
+            eptid=self.request.user.shib_eptid
+        ).exists()
+
+        # BASE_URL（ツイート用）
+        context['base_url'] = settings.BASE_URL
+
+        return context
+
+
+def first_vote(request, pk):
+    """統一テーマ予選投票処理
+    """
+    # 期間外の場合は 403
+    if not is_active(period_models.PeriodThemeFirstVote):
+        raise PermissionDenied
+
+    # すでに投票済みの場合は 403
+    if models.FirstVoteEptid.objects.filter(
+        eptid=request.user.shib_eptid
+    ).exists():
+        raise PermissionDenied
+
+    # テーマを指定
+    theme = get_object_or_404(models.Theme, pk=pk)
+
+    # 投票データを登録
+    obj = models.FirstVote.objects.create(
+        theme=theme
+    )
+    obj.save()
+    obj_eptid = models.FirstVoteEptid.objects.create(
+        eptid=request.user.shib_eptid
+    )
+    obj_eptid.save()
+
+    # message を登録
+    messages.success(request, '投票しました！')
+
+    return redirect('theme:first_vote')

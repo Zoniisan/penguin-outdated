@@ -11,6 +11,16 @@ urlpatterns = [
         name='submit'
     ),
     path(
+        'first_vote',
+        main.FirstVoteView.as_view(),
+        name='first_vote'
+    ),
+    path(
+        'first_vote/<int:pk>',
+        main.first_vote,
+        name='first_vote_pk'
+    ),
+    path(
         'staff/list',
         staff.ListView.as_view(),
         name='staff_list'

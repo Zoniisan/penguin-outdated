@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import mixins
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views import generic
 
 from theme import models
@@ -35,7 +35,9 @@ class DetailView(mixins.PermissionRequiredMixin, generic.TemplateView):
         context = super().get_context_data(**kwargs)
 
         # 統一テーマ案
-        context['theme'] = models.Theme.objects.get(pk=self.kwargs['pk'])
+        context['theme'] = get_object_or_404(
+            models.Theme, pk=self.kwargs['pk']
+        )
 
         return context
 
@@ -45,7 +47,9 @@ def accept(request, pk):
     """pk で指定した統一テーマ案を受理する
     """
     # テーマを指定
-    theme = models.Theme.objects.get(pk=pk)
+    theme = get_object_or_404(
+        models.Theme, pk=pk
+    )
 
     # 受理する統一テーマに仮の予選コードを与える
     theme.first_id = 'TA'
@@ -65,7 +69,9 @@ def disaccept(request, pk):
     """pk で指定した統一テーマ案を受理取り消しする
     """
     # テーマを指定
-    theme = models.Theme.objects.get(pk=pk)
+    theme = get_object_or_404(
+        models.Theme, pk=pk
+    )
 
     # 受理取り消しする統一テーマ案の予選コードを剥奪
     theme.first_id = None
