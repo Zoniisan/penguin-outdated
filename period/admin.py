@@ -11,6 +11,6 @@ class PeriodAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(models.PeriodeThemeSubmit)
-admin.site.register(models.PeriodeThemeFirstVote)
-admin.site.register(models.PeriodeThemeFinalVote)
+admin.site.register(models.PeriodThemeSubmit, PeriodAdmin)
+admin.site.register(models.PeriodThemeFirstVote, PeriodAdmin)
+admin.site.register(models.PeriodThemeFinalVote, PeriodAdmin)

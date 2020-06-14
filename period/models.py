@@ -11,7 +11,7 @@ class AbstractPeriod(models.Model):
         ordering = ('start',)
 
     def __str__(self):
-        return '-'.join([self.start, self.finish])
+        return '-'.join([str(self.start), str(self.finish)])
 
     start = models.DateTimeField(
         verbose_name='開始日時'
@@ -22,19 +22,19 @@ class AbstractPeriod(models.Model):
     )
 
 
-class PeriodeThemeSubmit(AbstractPeriod):
+class PeriodThemeSubmit(AbstractPeriod):
     class Meta:
         verbose_name = '統一テーマ応募期間'
         verbose_name_plural = verbose_name
 
 
-class PeriodeThemeFirstVote(AbstractPeriod):
+class PeriodThemeFirstVote(AbstractPeriod):
     class Meta:
         verbose_name = '統一テーマ予選投票期間'
         verbose_name_plural = verbose_name
 
 
-class PeriodeThemeFinalVote(AbstractPeriod):
+class PeriodThemeFinalVote(AbstractPeriod):
     class Meta:
         verbose_name = '統一テーマ決選投票期間'
         verbose_name_plural = verbose_name
