@@ -56,7 +56,8 @@ INSTALLED_APPS += [
 # penguin
 INSTALLED_APPS += [
     'home',
-    'period'
+    'period',
+    'theme'
 ]
 
 MIDDLEWARE = [
