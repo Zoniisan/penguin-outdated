@@ -16,9 +16,14 @@ urlpatterns = [
         name='first_vote'
     ),
     path(
-        'first_vote/<int:pk>',
-        main.first_vote,
-        name='first_vote_pk'
+        'final_vote',
+        main.FinalVoteView.as_view(),
+        name='final_vote'
+    ),
+    path(
+        'final_vote/<int:pk>',
+        main.final_vote,
+        name='final_vote_pk'
     ),
     path(
         'staff/list',

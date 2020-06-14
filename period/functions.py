@@ -29,7 +29,7 @@ def get_period_object_list():
     period_list = [
         {'period': models.PeriodThemeSubmit, 'url': 'theme:submit'},
         {'period': models.PeriodThemeFirstVote, 'url': 'theme:first_vote'},
-        {'period': models.PeriodThemeFinalVote, 'url': 'home:index'}
+        {'period': models.PeriodThemeFinalVote, 'url': 'theme:final_vote'}
     ]
 
     return [

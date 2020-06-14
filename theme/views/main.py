@@ -123,3 +123,66 @@ def first_vote(request, pk):
     messages.success(request, '投票しました！')
 
     return redirect('theme:first_vote')
+
+
+class FinalVoteView(mixins.LoginRequiredMixin, generic.TemplateView):
+    """統一テーマ案決選投票
+    """
+    template_name = 'theme/final_vote.html'
+
+    def get(self, request, **kwargs):
+        # 期間外の場合は 403
+        if not is_active(period_models.PeriodThemeFinalVote):
+            raise PermissionDenied
+
+        return super().get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 決選コードが振られた統一テーマ一覧
+        context['theme_list'] = models.Theme.objects.filter(
+            final_id__isnull=False
+        )
+
+        # 決選投票済みかどうか
+        context['voted'] = models.FinalVoteEptid.objects.filter(
+            eptid=self.request.user.shib_eptid
+        ).exists()
+
+        # BASE_URL（ツイート用）
+        context['base_url'] = settings.BASE_URL
+
+        return context
+
+
+def final_vote(request, pk):
+    """統一テーマ決選投票処理
+    """
+    # 期間外の場合は 403
+    if not is_active(period_models.PeriodThemeFinalVote):
+        raise PermissionDenied
+
+    # すでに投票済みの場合は 403
+    if models.FinalVoteEptid.objects.filter(
+        eptid=request.user.shib_eptid
+    ).exists():
+        raise PermissionDenied
+
+    # テーマを指定
+    theme = get_object_or_404(models.Theme, pk=pk)
+
+    # 投票データを登録
+    obj = models.FinalVote.objects.create(
+        theme=theme
+    )
+    obj.save()
+    obj_eptid = models.FinalVoteEptid.objects.create(
+        eptid=request.user.shib_eptid
+    )
+    obj_eptid.save()
+
+    # message を登録
+    messages.success(request, '投票しました！')
+
+    return redirect('theme:final_vote')
