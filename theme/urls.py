@@ -55,4 +55,9 @@ urlpatterns = [
         staff.FirstVoteView.as_view(),
         name='staff_first_vote'
     ),
+    path(
+        'staff/final_vote',
+        staff.FinalVoteView.as_view(),
+        name='staff_final_vote'
+    ),
 ]
