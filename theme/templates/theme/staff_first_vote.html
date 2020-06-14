@@ -1,0 +1,46 @@
+{% extends 'theme/staff_base.html' %}
+{% load bootstrap4 %}
+
+{% block ac_theme_staff_first %}
+active
+{% endblock ac_theme_staff_first %}
+
+{% block theme_staff_contents %}
+<h2>統一テーマ案一覧（予選票数順）</h2>
+<div class="alert alert-primary" role="alert">
+    <ul class="mb-0">
+        <li>各行を選択すると趣意文や応募者の情報を閲覧できます。</li>
+        <li>フォームに決勝投票進出件数を入力すると上位作品に決勝コードが割り当てられます。</li>
+        <li><b>同票の場合は適当に順位がつけられてしまうので注意してください</b>。</li>
+    </ul>
+</div>
+<table class="table table-hover table-clickable">
+    <thead>
+        <tr>
+            <th>予選コード</th>
+            <th>決選コード</th>
+            <th>統一テーマ案</th>
+            <th>予選票数</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for theme in theme_list %}
+        <tr data-href="{% url 'theme:staff_detail' theme.pk %}">
+            <th>{{ theme.first_id }}</th>
+            <th{% if theme.final_id %} class="table-danger"{% endif %}>{% if theme.final_id %}{{ theme.final_id }}{% else %}落選{% endif %}</th>
+            <td>{{ theme.theme }}</td>
+            <td>{{ theme.first_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<form action="" method="post" class="form">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+    <button type="submit" class="btn btn-primary btn-block">
+        決勝進出作品確定
+    </button>
+    {% endbuttons %}
+</form>
+{% endblock theme_staff_contents %}

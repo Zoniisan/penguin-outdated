@@ -3,11 +3,13 @@ import csv
 from django.contrib import messages
 from django.contrib.auth import mixins
 from django.contrib.auth.decorators import permission_required
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import generic
 
-from theme import models
+from theme import forms, models
 
 
 class ListView(mixins.PermissionRequiredMixin, generic.TemplateView):
@@ -124,3 +126,45 @@ def csv_download(self):
 
     # response を返す
     return response
+
+
+class FirstVoteView(mixins.PermissionRequiredMixin, generic.FormView):
+    """予選投票の結果を表示
+    """
+    template_name = 'theme/staff_first_vote.html'
+    permission_required = 'theme.view_theme'
+    form_class = forms.FinalAcceptForm
+    success_url = reverse_lazy('theme:staff_first_vote')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 統一テーマ案一覧（予選票数順）
+        context['theme_list'] = models.Theme.objects.filter(
+            first_id__isnull=False
+        ).annotate(first_count=Count('firstvote')).order_by('-first_count')
+
+        return context
+
+    def form_valid(self, form):
+        # form で指定した上位 n 件を取得
+        theme_list = models.Theme.objects.filter(
+            first_id__isnull=False
+        ).annotate(
+            first_count=Count('firstvote')
+        ).order_by('-first_count')[:form.cleaned_data['final_accept']]
+
+        # 決選コードを一旦全削除
+        for theme in models.Theme.objects.all():
+            theme.final_id = None
+            theme.save()
+
+        # 決選コードを割り当てる
+        for rank, final_theme in enumerate(theme_list):
+            final_theme.final_id = "TB-%s" % str(rank + 1).zfill(3)
+            final_theme.save()
+
+        # message 登録
+        messages.success(self.request, '決選コードを割り当てました')
+
+        return super().form_valid(form)

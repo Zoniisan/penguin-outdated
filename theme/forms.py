@@ -24,3 +24,15 @@ class SubmitForm(forms.ModelForm):
                 'data-max-count': 400,
             })
         }
+
+
+class FinalAcceptForm(forms.Form):
+    """決選投票に進む件数を入力する
+
+    1 以上 受理された統一テーマ案件数
+    """
+    final_accept = forms.IntegerField(
+        label='決選投票進出件数',
+        min_value=1,
+        max_value=models.Theme.objects.filter(first_id__isnull=False).count()
+    )

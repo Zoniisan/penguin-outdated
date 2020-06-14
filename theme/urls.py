@@ -45,4 +45,9 @@ urlpatterns = [
         staff.csv_download,
         name='csv_download'
     ),
+    path(
+        'staff/first_vote',
+        staff.FirstVoteView.as_view(),
+        name='staff_first_vote'
+    ),
 ]
