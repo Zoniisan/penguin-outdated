@@ -2,11 +2,11 @@
 {% load bootstrap4 %}
 
 {% block title %}
-統一テーマ案管理 予選投票
+統一テーマ案管理 決選投票
 {% endblock title %}
 
 {% block header %}
-統一テーマ案管理 予選投票
+統一テーマ案管理 決選投票
 {% endblock header %}
 
 {% block ac_theme_staff %}
@@ -29,10 +29,10 @@ active
         <a class="nav-link" href="{% url 'theme:list' %}">受理</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active" href="{% url 'theme:first_vote_result' %}">予選投票</a>
+        <a class="nav-link" href="{% url 'theme:first_vote_result' %}">予選投票</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{% url 'theme:final_vote_result' %}">決選投票</a>
+        <a class="nav-link active" href="{% url 'theme:final_vote_result' %}">決選投票</a>
     </li>
 </ul>
 
@@ -42,7 +42,6 @@ active
         <table class="table table-hover table-clickable">
             <thead>
                 <tr>
-                    <th>予選コード</th>
                     <th>決選コード</th>
                     <th>統一テーマ案</th>
                     <th>票数</th>
@@ -50,27 +49,14 @@ active
             </thead>
             <tbody>
                 {% for theme in theme_list %}
-                <tr data-href="{% url 'theme:detail' theme.pk %}">
-                    <th>{{ theme.first_id }}</th>
-                    <th{% if theme.final_id %} class="table-danger" {% endif %}>
-                        {% if theme.final_id %}{{ theme.final_id }}{% else %}落選{% endif %}</th>
-                        <td>{{ theme.theme }}</td>
-                        <td>{{ theme.first_count }}</td>
+                <tr data-href="{% url 'theme:detail' theme.pk %}"{% if forloop.first %} class="table-danger"{% endif %}>
+                    <th>{{ theme.final_id }}</th>
+                    <td>{{ theme.theme }}</td>
+                    <td>{{ theme.final_count }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <h3>決選進出作品決定</h3>
-        下記フォームに進出件数を入力すると、上位テーマに決選コードが割り当てられます。
-        <form action="" method="post" class="form">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            {% buttons %}
-            <button type="submit" class="btn btn-primary btn-block">
-                OK
-            </button>
-            {% endbuttons %}
-        </form>
     </div>
 </div>
 

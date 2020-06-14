@@ -280,3 +280,22 @@ class FirstVoteResultView(mixins.PermissionRequiredMixin, generic.FormView):
         messages.success(self.request, '決選コードを割り当てました！')
 
         return redirect('theme:first_vote_result')
+
+
+class FinalVoteResultView(mixins.PermissionRequiredMixin, generic.TemplateView):
+    """決選投票結果画面
+
+    決選投票の結果を表示
+    """
+    template_name = 'theme/final_vote_result.html'
+    permission_required = 'theme.view_theme'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 統一テーマ案一覧（予選獲得票数順）
+        context['theme_list'] = models.Theme.objects.filter(
+            final_id__isnull=False
+        ).annotate(final_count=Count('finalvote')).order_by('-final_count')
+
+        return context

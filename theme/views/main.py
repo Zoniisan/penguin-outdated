@@ -172,3 +172,56 @@ def first_vote_to_theme(self, pk):
     messages.success(self, '投票しました！')
 
     return redirect('theme:first_vote')
+
+
+class FinalVoteView(mixins.LoginRequiredMixin, generic.TemplateView):
+    """決選投票画面
+
+    統一テーマ案の一覧を表示し、決選投票が可能
+    """
+    template_name = 'theme/final_vote.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # PENGUIN の公式サイトの URL（ツイート用）
+        context['base_url'] = settings.BASE_URL
+
+        # 統一テーマ案一覧（予選コードが割り当てられているもののみ）
+        context['theme_list'] = models.Theme.objects.filter(
+            final_id__isnull=False
+        )
+
+        # 既に投票したテーマがあるのであれば取得
+        context['voted_data'] = models.FinalVote.objects.filter(
+            eptid=self.request.user.shib_eptid
+        ).first()
+
+        return context
+
+
+def final_vote_to_theme(self, pk):
+    """予選投票を行う
+    """
+    # user を取得
+    user = self.user
+
+    # ログインが必要
+    if not user.is_authenticated:
+        raise PermissionDenied
+
+    # 多重投票を阻止
+    if models.FinalVote.objects.filter(eptid=user.shib_eptid).exists():
+        raise PermissionDenied
+
+    # 投票を行う
+    obj = models.FinalVote(
+        theme=models.Theme.objects.get(pk=pk),
+        eptid=user.shib_eptid
+    )
+    obj.save()
+
+    # message 登録
+    messages.success(self, '投票しました！')
+
+    return redirect('theme:final_vote')

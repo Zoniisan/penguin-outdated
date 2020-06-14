@@ -21,6 +21,16 @@ urlpatterns = [
         name='first_vote_to_theme'
     ),
     path(
+        'final_vote',
+        main.FinalVoteView.as_view(),
+        name='final_vote'
+    ),
+    path(
+        'final_vote_to_theme/<int:pk>',
+        main.final_vote_to_theme,
+        name='final_vote_to_theme'
+    ),
+    path(
         'staff/period',
         staff.PeriodView.as_view(),
         name='period'
@@ -77,5 +87,10 @@ urlpatterns = [
         'staff/first_vote_result',
         staff.FirstVoteResultView.as_view(),
         name='first_vote_result'
+    ),
+    path(
+        'staff/final_vote_result',
+        staff.FinalVoteResultView.as_view(),
+        name='final_vote_result'
     ),
 ]
