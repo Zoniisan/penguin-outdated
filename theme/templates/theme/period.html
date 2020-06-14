@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
-統一テーマ管理
+統一テーマ案管理
 {% endblock title %}
 
 {% block header %}
-統一テーマ管理 期間管理
+統一テーマ案管理 期間管理
 {% endblock header %}
 
 {% block ac_theme_staff %}
@@ -16,7 +16,7 @@ active
 {% block contents %}
 <nav class="breadcrumb mb-2 px-3">
     <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
-    <span class="breadcrumb-item active">統一テーマ管理</span>
+    <span class="breadcrumb-item active">統一テーマ案管理</span>
 </nav>
 
 <ul class="nav nav-tabs">
@@ -27,7 +27,7 @@ active
         <a class="nav-link" href="{% url 'theme:list' %}">受理</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">予選投票</a>
+        <a class="nav-link" href="{% url 'theme:first_vote_result' %}">予選投票</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#">決選投票</a>

@@ -182,7 +182,7 @@
                     {% endif %}
                     {% if theme_first_vote_active %}
                     <li class="{% block ac_theme_first_vote %}{% endblock ac_theme_first_vote %}"><a
-                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ予選投票</a></li>
+                            href="{% url 'theme:first_vote' %}"><i class="fas fa-vote-yea"></i>統一テーマ予選投票</a></li>
                     {% endif %}
                     {% if theme_final_vote_active %}
                     <li class="{% block ac_theme_final_vote %}{% endblock ac_theme_final_vote %}"><a
@@ -210,7 +210,7 @@
                             href="{% url 'home:staff_list' %}"><i class="fas fa-th-list"></i>事務局員名簿</a></li>
                     {% if perms.theme.view_theme %}
                     <li class="{% block ac_theme_staff %}{% endblock ac_theme_staff %}"><a
-                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ管理</a></li>
+                            href="{% url 'theme:period' %}"><i class="fas fa-vote-yea"></i>統一テーマ案管理</a></li>
                     {% endif %}
                     <li> <a href="/admin"> <i class="fas fa-database"></i>管理サイト</a></li>
                 </ul>

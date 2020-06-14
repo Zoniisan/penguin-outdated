@@ -3,13 +3,14 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth import mixins
+from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views import generic
 
 from penguin.forms import PeriodForm
 from penguin.functions import period_active
-from theme import models
+from theme import forms, models
 
 
 class PeriodView(mixins.PermissionRequiredMixin, generic.TemplateView):
@@ -200,8 +201,8 @@ def apply_first_id():
     """予選コードを振り直す
     """
     first_accept_theme_list = [
-            obj for obj in models.Theme.objects.all() if obj.first_accepted()
-        ]
+        obj for obj in models.Theme.objects.all() if obj.first_accepted()
+    ]
 
     # 予選コードを振り直す
     for count, first_accept_theme in enumerate(first_accept_theme_list):
@@ -236,3 +237,46 @@ def csv_download(self):
 
     # response を返す
     return response
+
+
+class FirstVoteResultView(mixins.PermissionRequiredMixin, generic.FormView):
+    """予選投票結果画面
+
+    予選投票の結果を表示し、決選投票の候補を確定する
+    """
+    template_name = 'theme/first_vote_result.html'
+    permission_required = 'theme.view_theme'
+    form_class = forms.FinishVoteCountForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 統一テーマ案一覧（予選獲得票数順）
+        context['theme_list'] = models.Theme.objects.filter(
+            first_id__isnull=False
+        ).annotate(first_count=Count('firstvote')).order_by('-first_count')
+
+        return context
+
+    def form_valid(self, form):
+        # form で指定した上位 n 件を取得
+        final_theme_set = models.Theme.objects.filter(
+            first_id__isnull=False
+        ).annotate(
+            first_count=Count('firstvote')
+        ).order_by('-first_count')[:form.cleaned_data['count']]
+
+        # 決選コードを一旦全削除
+        for theme in models.Theme.objects.all():
+            theme.final_id = None
+            theme.save()
+
+        # 決選コードを割り当てる
+        for rank, final_theme in enumerate(final_theme_set):
+            final_theme.final_id = "TB-%s" % str(rank + 1).zfill(3)
+            final_theme.save()
+
+        # message 登録
+        messages.success(self.request, '決選コードを割り当てました！')
+
+        return redirect('theme:first_vote_result')

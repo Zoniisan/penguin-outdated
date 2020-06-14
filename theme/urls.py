@@ -11,6 +11,16 @@ urlpatterns = [
         name='application'
     ),
     path(
+        'first_vote',
+        main.FirstVoteView.as_view(),
+        name='first_vote'
+    ),
+    path(
+        'first_vote_to_theme/<int:pk>',
+        main.first_vote_to_theme,
+        name='first_vote_to_theme'
+    ),
+    path(
         'staff/period',
         staff.PeriodView.as_view(),
         name='period'
@@ -62,5 +72,10 @@ urlpatterns = [
         'staff/csv_download',
         staff.csv_download,
         name='csv_download'
+    ),
+    path(
+        'staff/first_vote_result',
+        staff.FirstVoteResultView.as_view(),
+        name='first_vote_result'
     ),
 ]
