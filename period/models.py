@@ -8,6 +8,7 @@ class AbstractPeriod(models.Model):
     複数インスタンスが存在する場合は、そのうちどれかに含まれていれば有効
     """
     class Meta:
+        abstract = True
         ordering = ('start',)
 
     def __str__(self):

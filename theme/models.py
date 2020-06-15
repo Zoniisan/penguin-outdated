@@ -62,71 +62,64 @@ class Theme(models.Model):
     )
 
 
-class FirstVoteEptid(models.Model):
-    """予選投票 EPTID 記録用のモデル
+class AbstractVoteEptid(models.Model):
+    """EPTID 記録用抽象モデル
 
     eptid を pk とし、作成日時（作成順）をわからなくすることで匿名性を保持
+    """
+    class Meta:
+        abstract = True
+        ordering = ('eptid',)
+
+    def __str__(self):
+        return self.eptid
+
+    eptid = models.CharField(
+        verbose_name='eptid',
+        max_length=400,
+        primary_key=True
+    )
+
+
+class FirstVoteEptid(AbstractVoteEptid):
+    """予選投票 EPTID 記録用のモデル
     """
     class Meta:
         verbose_name = '予選投票/EPTID'
         verbose_name_plural = verbose_name
-        ordering = ('eptid',)
-
-    def __str__(self):
-        return self.eptid
-
-    eptid = models.CharField(
-        verbose_name='eptid',
-        max_length=400,
-        primary_key=True
-    )
 
 
-class FinalVoteEptid(models.Model):
+class FinalVoteEptid(AbstractVoteEptid):
     """決選投票 EPTID 記録用のモデル
-
-    eptid を pk とし、作成日時（作成順）をわからなくすることで匿名性を保持
     """
     class Meta:
         verbose_name = '決選投票/EPTID'
         verbose_name_plural = verbose_name
-        ordering = ('eptid',)
+
+
+class AbstractVote(models.Model):
+    """投票先 抽象モデル
+    """
+    class Meta:
+        abstract = True
 
     def __str__(self):
-        return self.eptid
+        return str(self.theme)
 
-    eptid = models.CharField(
-        verbose_name='eptid',
-        max_length=400,
-        primary_key=True
+    theme = models.ForeignKey(
+        'theme.Theme',
+        verbose_name='統一テーマ案',
+        on_delete=models.CASCADE
     )
 
 
-class FirstVote(models.Model):
+class FirstVote(AbstractVote):
     class Meta:
         verbose_name = '予選投票/投票先'
         verbose_name_plural = verbose_name
 
-    def __str__(self):
-        return str(self.theme)
 
-    theme = models.ForeignKey(
-        'theme.Theme',
-        verbose_name='統一テーマ案',
-        on_delete=models.CASCADE
-    )
-
-
-class FinalVote(models.Model):
+class FinalVote(AbstractVote):
     class Meta:
         verbose_name = '決選投票/投票先'
         verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return str(self.theme)
-
-    theme = models.ForeignKey(
-        'theme.Theme',
-        verbose_name='統一テーマ案',
-        on_delete=models.CASCADE
-    )
