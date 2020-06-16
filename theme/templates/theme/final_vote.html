@@ -35,7 +35,9 @@
                 <tr>
                     <th>決選コード</th>
                     <th>統一テーマ案</th>
+                    {% if voted %}
                     <th>tweet</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -43,10 +45,12 @@
                 <tr data-href="#" data-toggle="modal" data-target="#theme-{{ theme.pk }}">
                     <th>{{ theme.final_id }}</th>
                     <td>{{ theme.theme }}</td>
+                    {% if voted %}
                     <td><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button"
                             data-text="【決選投票】「{{ theme.theme }}」を共有しました！京大生なら誰でも統一テーマ投票に参加できます！" data-size="large"
                             data-url="{{ base_url }}{% url 'theme:final_vote' %}" data-hashtags="NF統一テーマ投票"
                             data-lang="ja" data-show-count="false">Tweet</a></td>
+                    {% endif %}
                 </tr>
                 <!-- Modal -->
                 <div class="modal fade" id="theme-{{ theme.pk }}" tabindex="-1" role="dialog"

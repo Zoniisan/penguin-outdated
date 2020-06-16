@@ -99,9 +99,7 @@ def apply_first_id():
     ]
 
     # 予選コードを振り直す
-    for count, theme in enumerate(theme_list):
-        theme.first_id = "TA-%s" % str(count + 1).zfill(3)
-        theme.save()
+    apply_id(theme_list, 'first')
 
 
 @permission_required('theme.view_theme', raise_exception=True)
@@ -140,19 +138,14 @@ class FirstVoteView(mixins.PermissionRequiredMixin, generic.FormView):
         context = super().get_context_data(**kwargs)
 
         # 統一テーマ案一覧（予選票数順）
-        context['theme_list'] = models.Theme.objects.filter(
-            first_id__isnull=False
-        ).annotate(first_count=Count('firstvote')).order_by('-first_count')
-
+        context['theme_list'] = get_theme_list('first')
         return context
 
     def form_valid(self, form):
         # form で指定した上位 n 件を取得
-        theme_list = models.Theme.objects.filter(
-            first_id__isnull=False
-        ).annotate(
-            first_count=Count('firstvote')
-        ).order_by('-first_count')[:form.cleaned_data['final_accept']]
+        theme_list = get_theme_list('first')[
+            :form.cleaned_data['final_accept']
+        ]
 
         # 決選コードを一旦全削除
         for theme in models.Theme.objects.all():
@@ -160,9 +153,7 @@ class FirstVoteView(mixins.PermissionRequiredMixin, generic.FormView):
             theme.save()
 
         # 決選コードを割り当てる
-        for rank, final_theme in enumerate(theme_list):
-            final_theme.final_id = "TB-%s" % str(rank + 1).zfill(3)
-            final_theme.save()
+        apply_id(theme_list, 'final')
 
         # message 登録
         messages.success(self.request, '決選コードを割り当てました')
@@ -180,8 +171,37 @@ class FinalVoteView(mixins.PermissionRequiredMixin, generic.TemplateView):
         context = super().get_context_data(**kwargs)
 
         # 統一テーマ案一覧（予選票数順）
-        context['theme_list'] = models.Theme.objects.filter(
-            final_id__isnull=False
-        ).annotate(final_count=Count('finalvote')).order_by('-final_count')
+        context['theme_list'] = get_theme_list('final')
 
         return context
+
+
+def get_theme_list(mode):
+    """context['theme_list'] を取得する(票数順)
+    """
+    kwargs_filter = {
+        '%s_id__isnull' % mode: False
+    }
+
+    kwargs_annotate = {
+        '%s_count' % mode: Count('%svote' % mode)
+    }
+
+    return models.Theme.objects.filter(
+        **kwargs_filter
+    ).annotate(
+        **kwargs_annotate
+    ).order_by(
+        '-%s_count' % mode
+    )
+
+
+def apply_id(theme_list, mode):
+    """各統一テーマ案にコードを割り当てる
+    """
+    for count, theme in enumerate(theme_list):
+        if mode == 'first':
+            theme.first_id = "TA-%s" % str(count + 1).zfill(3)
+        elif mode == 'final':
+            theme.final_id = "TB-%s" % str(count + 1).zfill(3)
+        theme.save()
