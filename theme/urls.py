@@ -12,17 +12,26 @@ urlpatterns = [
     ),
     path(
         'first_vote',
-        main.FirstVoteView.as_view(),
+        main.VoteView.as_view(),
+        {'mode': 'first'},
         name='first_vote'
     ),
     path(
         'final_vote',
-        main.FinalVoteView.as_view(),
+        main.VoteView.as_view(),
+        {'mode': 'final'},
         name='final_vote'
     ),
     path(
+        'first_vote/<int:pk>',
+        main.vote,
+        {'mode': 'first'},
+        name='first_vote_pk'
+    ),
+    path(
         'final_vote/<int:pk>',
-        main.final_vote,
+        main.vote,
+        {'mode': 'final'},
         name='final_vote_pk'
     ),
     path(
