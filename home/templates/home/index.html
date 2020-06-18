@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load period %}
 
 {% block title %}
 ホーム
@@ -37,7 +38,7 @@ active
                 {% for notice in notice_list %}
                 <div class="carousel-item{% if forloop.first %} active{% endif %}">
                     <h2>{{ notice.title }}</h2>
-                    <p>{{ notice.body|linebreaksbr }}</p>
+                    <p>{{ notice.body|linebreaksbr|urlize }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -63,6 +64,23 @@ active
         </div>
     </div>
 </div>
+{% endif %}
+
+<!--Home Menu for periodic event -->
+{% period %}
+{% if request.user.is_authenticated %}
+{% for period in period_list %}
+{% if period.active and period.url %}
+<div class="mb-4">
+    <div class="row mb-4">
+        <div class="col">
+            <a class="btn btn-warning btn-lg btn-block btn-warning-pulse" href="{% url period.url %}" role="button">
+                {{ period.omitted_name }}</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
 {% endif %}
 
 <!--Home Menu for not PC-->

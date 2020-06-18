@@ -1,0 +1,33 @@
+{% extends 'theme/staff_base.html' %}
+{% load bootstrap4 %}
+
+{% block ac_theme_staff_final %}
+active
+{% endblock ac_theme_staff_final %}
+
+{% block theme_staff_contents %}
+<h2>統一テーマ案一覧（決選票数順）</h2>
+<div class="alert alert-primary" role="alert">
+    <ul class="mb-0">
+        <li>各行を選択すると趣意文や応募者の情報を閲覧できます。</li>
+    </ul>
+</div>
+<table class="table table-hover table-clickable">
+    <thead>
+        <tr>
+            <th>決選コード</th>
+            <th>統一テーマ案</th>
+            <th>決選票数</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for theme in theme_list %}
+        <tr data-href="{% url 'theme:staff_detail' theme.pk %}" {% if forloop.first %}class="table-info" {% endif %}>
+            <th>{{ theme.final_id }}{% if forloop.first %}（優勝）{% endif %}</th>
+            <td>{{ theme.theme }}</td>
+            <td>{{ theme.final_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock theme_staff_contents %}

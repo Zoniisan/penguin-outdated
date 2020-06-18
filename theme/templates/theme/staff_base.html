@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}
+統一テーマ案管理
+{% endblock title %}
+
+{% block header %}
+統一テーマ案管理
+{% endblock header %}
+
+{% block ac_theme %}
+active
+{% endblock ac_theme %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">統一テーマ案管理</span>
+</nav>
+
+<div class="alert alert-info" role="alert">
+    この機能にアクセスできるのはシステム管理者と権限 '<b>theme.view_theme</b>' を持つスタッフのみです。
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link {% block ac_theme_staff_list %}{% endblock ac_theme_staff_list %}"
+            href="{% url 'theme:staff_list' %}">受理</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% block ac_theme_staff_first %}{% endblock ac_theme_staff_first %}"
+            href="{% url 'theme:staff_first_vote' %}">予選投票結果・決選進出作品確定</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% block ac_theme_staff_final %}{% endblock ac_theme_staff_final %}"
+            href="{% url 'theme:staff_final_vote' %}">決選投票結果</a>
+    </li>
+</ul>
+<div class="card">
+    <div class="card-body">
+        {% block theme_staff_contents %}
+        {% endblock theme_staff_contents %}
+    </div>
+</div>
+
+{% endblock contents %}

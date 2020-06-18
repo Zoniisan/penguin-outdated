@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+期間設定
+{% endblock title %}
+
+{% block header %}
+期間設定
+<br>{{ contact.title }}
+{% endblock header %}
+
+{% block ac_period %}
+active
+{% endblock ac_period %}
+
+{% block contents %}
+<nav class="breadcrumb mb-2 px-3">
+    <a class="breadcrumb-item" href="{% url 'home:index' %}">ホーム</a>
+    <span class="breadcrumb-item active">期間設定</span>
+</nav>
+
+<div class="card">
+    <div class="card-header">
+        期間設定
+    </div>
+    <div class="card-body">
+    <div class="alert alert-primary" role="alert">
+        <b>{{ now }}</b> 現在の情報です。<br>
+        期間の追加・変更はシステム管理者が<a href="/admin/period">管理サイト</a>から行ってください。
+    </div>
+        {% for obj in object_list %}
+        <h2>{{ obj.name }}</h2>
+        {% if obj.active %}
+        <p class="text-success">
+            <i class="fas fa-check"></i> 有効
+        </p>
+        {% else %}
+        <p class="text-danger">
+            <i class="fas fa-times"></i> 無効
+        </p>
+        {% endif %}
+        <table class="table">
+            <tdead>
+                <tr>
+                    <td>開始</td>
+                    <td>終了</td>
+                </tr>
+            </tdead>
+            <tbody>
+                {% for instance in obj.list %}
+                <tr>
+                    <td>{{ instance.start }}</td>
+                    <td>{{ instance.finish }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock contents %}
