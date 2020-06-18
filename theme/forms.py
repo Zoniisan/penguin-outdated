@@ -34,5 +34,4 @@ class FinalAcceptForm(forms.Form):
     final_accept = forms.IntegerField(
         label='決選投票進出件数',
         min_value=1,
-        max_value=models.Theme.objects.filter(first_id__isnull=False).count()
     )

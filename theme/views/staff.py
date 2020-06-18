@@ -142,10 +142,16 @@ class FirstVoteView(mixins.PermissionRequiredMixin, generic.FormView):
         return context
 
     def form_valid(self, form):
+        # フォームで入力した値が受理件数を超えている場合は
+        # 受理件数を指定したものとみなす
+        input_data = form.cleaned_data['final_accept']
+        limit_data = models.Theme.objects.filter(
+            first_id__isnull=False
+        ).count()
+        count = input_data if input_data <= limit_data else limit_data
+
         # form で指定した上位 n 件を取得
-        theme_list = get_theme_list('first')[
-            :form.cleaned_data['final_accept']
-        ]
+        theme_list = get_theme_list('first')[:count]
 
         # 決選コードを一旦全削除
         for theme in models.Theme.objects.all():
