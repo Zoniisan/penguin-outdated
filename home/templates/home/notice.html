@@ -129,7 +129,7 @@ active
                 {% for notice in notice_list %}
                 <div class="carousel-item{% if forloop.first %} active{% endif %}">
                     <h2>{{ notice.title }}</h2>
-                    <p>{{ notice.body|linebreaksbr }}</p>
+                    <p>{{ notice.body|linebreaksbr|urlize }}</p>
                 </div>
                 {% endfor %}
             </div>

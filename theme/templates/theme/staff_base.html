@@ -18,6 +18,10 @@ active
     <span class="breadcrumb-item active">統一テーマ案管理</span>
 </nav>
 
+<div class="alert alert-info" role="alert">
+    この機能にアクセスできるのはシステム管理者と権限 '<b>theme.view_theme</b>' を持つスタッフのみです。
+</div>
+
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link {% block ac_theme_staff_list %}{% endblock ac_theme_staff_list %}"
@@ -28,7 +32,8 @@ active
             href="{% url 'theme:staff_first_vote' %}">予選投票結果・決選進出作品確定</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% block ac_theme_staff_final %}{% endblock ac_theme_staff_final %}" href="{% url 'theme:staff_final_vote' %}">決選投票結果</a>
+        <a class="nav-link {% block ac_theme_staff_final %}{% endblock ac_theme_staff_final %}"
+            href="{% url 'theme:staff_final_vote' %}">決選投票結果</a>
     </li>
 </ul>
 <div class="card">

@@ -26,6 +26,7 @@ def get_period_object_list():
     """period 系のモデルについて情報を返す
     """
     # Period 系モデルを列挙
+    # url を指定した場合はホーム画面とサイドメニューにリンクを表示
     period_list = [
         {'period': models.PeriodThemeSubmit, 'url': 'theme:submit'},
         {'period': models.PeriodThemeFirstVote, 'url': 'theme:first_vote'},

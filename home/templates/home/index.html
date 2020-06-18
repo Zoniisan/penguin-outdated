@@ -38,7 +38,7 @@ active
                 {% for notice in notice_list %}
                 <div class="carousel-item{% if forloop.first %} active{% endif %}">
                     <h2>{{ notice.title }}</h2>
-                    <p>{{ notice.body|linebreaksbr }}</p>
+                    <p>{{ notice.body|linebreaksbr|urlize }}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -70,7 +70,7 @@ active
 {% period %}
 {% if request.user.is_authenticated %}
 {% for period in period_list %}
-{% if period.active %}
+{% if period.active and period.url %}
 <div class="mb-4">
     <div class="row mb-4">
         <div class="col">

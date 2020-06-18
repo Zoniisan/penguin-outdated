@@ -179,7 +179,7 @@
                     <!--periodic event-->
                     {% period %}
                     {% for period in period_list %}
-                    {% if period.active %}
+                    {% if period.active and period.url %}
                     <li class="period"><a href="{% url period.url %}"><i
                                 class="fas fa-star"></i>{{ period.omitted_name }}</a></li>
                     {% endif %}

@@ -25,7 +25,7 @@ class Notice(models.Model):
     body = models.TextField(
         verbose_name='本文',
         max_length=100,
-        help_text='100 文字以内で入力してください。あまり長い文章は好ましくありません。'
+        help_text='100 文字以内で入力してください。URL を入力すると自動的にリンクに変換されます。'
     )
 
     writer = models.ForeignKey(
