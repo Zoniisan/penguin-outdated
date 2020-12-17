@@ -58,6 +58,8 @@ INSTALLED_APPS += [
 INSTALLED_APPS += [
     'home',
     'period',
+    'project',
+    'register',
     'theme'
 ]
 
